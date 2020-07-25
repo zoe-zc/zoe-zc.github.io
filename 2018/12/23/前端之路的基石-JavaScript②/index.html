@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/ego-blog%20(1).png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/ego-blog.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto Slab:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="JavaScript(ECMAScript)、DOM、BOM统称为JavaScript三大部分 JavaScript引入 页面级jsscript标签也有用做存储数据的作用，设置type&#x3D;”text&#x2F;tpl”后，script标签内就只能装代码但不能运行。但是可以将数据取出  引入外部js文件在.html文件同级文件夹下，新建一个后缀名为.js的文件，在.html标签内通过link标签引入.js文件">
+<meta property="og:type" content="article">
+<meta property="og:title" content="前端之路的基石-JavaScript②">
+<meta property="og:url" content="http://yoursite.com/2018/12/23/%E5%89%8D%E7%AB%AF%E4%B9%8B%E8%B7%AF%E7%9A%84%E5%9F%BA%E7%9F%B3-JavaScript%E2%91%A1/index.html">
+<meta property="og:site_name" content="Zoe">
+<meta property="og:description" content="JavaScript(ECMAScript)、DOM、BOM统称为JavaScript三大部分 JavaScript引入 页面级jsscript标签也有用做存储数据的作用，设置type&#x3D;”text&#x2F;tpl”后，script标签内就只能装代码但不能运行。但是可以将数据取出  引入外部js文件在.html文件同级文件夹下，新建一个后缀名为.js的文件，在.html标签内通过link标签引入.js文件">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/images/20062601/js2/Image.png">
+<meta property="og:image" content="http://yoursite.com/images/20062601/js2/Image%5B1%5D.png">
+<meta property="og:image" content="http://yoursite.com/images/20062601/js2/Image%5B2%5D.png">
+<meta property="og:image" content="http://yoursite.com/images/20062601/js2/Image%5B3%5D.png">
+<meta property="og:image" content="http://yoursite.com/images/20062601/js2/Image%5B4%5D.png">
+<meta property="og:image" content="http://yoursite.com/images/20062601/js2/Image%5B5%5D.png">
+<meta property="og:image" content="http://yoursite.com/images/20062601/js2/Image%5B6%5D.png">
+<meta property="og:image" content="http://yoursite.com/images/20062601/js2/Image%5B7%5D.png">
+<meta property="og:image" content="http://yoursite.com/images/20062601/js2/Image%5B8%5D.png">
+<meta property="og:image" content="http://yoursite.com/images/20062601/js2/Image%5B9%5D.png">
+<meta property="og:image" content="http://yoursite.com/images/20062601/js2/Image%5B10%5D.png">
+<meta property="og:image" content="http://yoursite.com/images/20062601/js2/Image%5B11%5D.png">
+<meta property="og:image" content="http://yoursite.com/images/20062601/js2/Image%5B12%5D.png">
+<meta property="og:image" content="http://yoursite.com/images/20062601/js2/Image%5B13%5D.png">
+<meta property="og:image" content="http://yoursite.com/images/20062601/js2/Image%5B14%5D.png">
+<meta property="og:image" content="http://yoursite.com/images/20062601/js2/Image%5B15%5D.png">
+<meta property="og:image" content="http://yoursite.com/images/20062601/js2/Image%5B16%5D.png">
+<meta property="og:image" content="http://yoursite.com/images/20062601/js2/Image%5B17%5D.png">
+<meta property="og:image" content="http://yoursite.com/images/20062601/js2/Image%5B18%5D.png">
+<meta property="og:image" content="http://yoursite.com/images/20062601/js2/Image%5B19%5D.png">
+<meta property="og:image" content="http://yoursite.com/images/20062601/js2/Image%5B20%5D.png">
+<meta property="og:image" content="http://yoursite.com/images/20062601/js2/Image%5B21%5D.png">
+<meta property="og:image" content="http://yoursite.com/images/20062601/js2/Image%5B22%5D.png">
+<meta property="og:image" content="http://yoursite.com/images/20062601/js2/Image%5B23%5D.png">
+<meta property="og:image" content="http://yoursite.com/images/20062601/js2/Image%5B24%5D.png">
+<meta property="og:image" content="http://yoursite.com/images/20062601/js2/Image%5B25%5D.png">
+<meta property="og:image" content="http://yoursite.com/images/20062601/js2/Image%5B26%5D.png">
+<meta property="article:published_time" content="2018-12-23T02:40:06.000Z">
+<meta property="article:modified_time" content="2020-06-28T11:18:42.801Z">
+<meta property="article:author" content="zoe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/images/20062601/js2/Image.png">
+
+<link rel="canonical" href="http://yoursite.com/2018/12/23/%E5%89%8D%E7%AB%AF%E4%B9%8B%E8%B7%AF%E7%9A%84%E5%9F%BA%E7%9F%B3-JavaScript%E2%91%A1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>前端之路的基石-JavaScript② | Zoe</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Zoe</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">zoe's blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/zoe-zc" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/23/%E5%89%8D%E7%AB%AF%E4%B9%8B%E8%B7%AF%E7%9A%84%E5%9F%BA%E7%9F%B3-JavaScript%E2%91%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://tvax2.sinaimg.cn/crop.0.0.960.960.180/b4866dcfly8fp6p33spu1j20qo0qomz2.jpg?Expires=1564549093&ssig=e3yJPxIPmx&KID=imgbed,tva">
+      <meta itemprop="name" content="zoe">
+      <meta itemprop="description" content="做自己喜欢的事情，为喜欢的事情而努力">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zoe">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          前端之路的基石-JavaScript②
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-12-23 10:40:06" itemprop="dateCreated datePublished" datetime="2018-12-23T10:40:06+08:00">2018-12-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-06-28 19:18:42" itemprop="dateModified" datetime="2020-06-28T19:18:42+08:00">2020-06-28</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>JavaScript(ECMAScript)、DOM、BOM统称为JavaScript三大部分</p>
+<h2 id="JavaScript引入"><a href="#JavaScript引入" class="headerlink" title="JavaScript引入"></a>JavaScript引入</h2><ol>
+<li><p>页面级js<br><img src="/images/20062601/js2/Image.png" alt=""><br>script标签也有用做存储数据的作用，设置type=”text/tpl”后，script标签内就只能装代码但不能运行。但是可以将数据取出</p>
+</li>
+<li><p>引入外部js文件<br>在<code>.html</code>文件同级文件夹下，新建一个后缀名为<code>.js</code>的文件，在<code>.html</code>标签内通过<code>link</code>标签引入<code>.js</code>文件</p>
+<blockquote>
+<p>关于后缀名：JavaScript外部文件的后缀名实际上应该是javascript，但是由于当时使用的是奔腾四处理器系统windows98，奠定了程序的基础，windows98要求文件后缀名最多三位，由于历史遗留问题至今还在，所以html文件的后缀写成<code>.htm</code>也是可以运行的，所以javascript就被简写成<code>.js</code></p>
+</blockquote>
+</li>
+</ol>
+<p><img src="/images/20062601/js2/Image%5B1%5D.png" alt=""></p>
+<p>为符合web标准，结构、样式、行为相分离， 通常会采用外部引入的方式</p>
+<blockquote>
+<p>问：是否可以引入js文件，还在script标签内写代码？<br>不可以，只有外部文件的内容生效</p>
+</blockquote>
+<h2 id="Js基本语法"><a href="#Js基本语法" class="headerlink" title="Js基本语法"></a>Js基本语法</h2><p>编程语言的特点：有变量、有函数、有数据结构并且可以进行基本运算</p>
+<p>JavaScript是编程语言</p>
+<p>HTML、CSS不是编程语言，只是计算机语言的一个小门类</p>
+<h3 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h3><p>1.储存数据<br>2.以便于后续使用</p>
+<blockquote>
+<p>var：variable，用来声明变量</p>
+</blockquote>
+<p>举例：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a;</span><br></pre></td></tr></table></figure>
+<p>这个过程可以比作：向系统申请了一个变量的空间，这个空间叫做<code>a</code>，这个过程就叫变量声明(variable declaration)</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a = <span class="number">100</span>;</span><br></pre></td></tr></table></figure>
+<p>声明完成后，再向<code>a</code>赋值100，注：这里的”=”不是等号，而是赋值符号</p>
+<p>上述例子，可以简写：（这里包含两个过程）</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = <span class="number">100</span>;</span><br></pre></td></tr></table></figure>
+<p>注意：<br>&emsp;① 声明多个变量时，需要使用单一var模式，即每个变量都换行展示且用逗号”,”分隔<br><img src="/images/20062601/js2/Image%5B2%5D.png" alt=""></p>
+<p>&emsp;② 同一个变量名可以重复声明不会报错，但最新声明的变量会覆盖初始声明变量的值，所以不要重复声明<br>&emsp;&emsp;命名规则：<br><img src="/images/20062601/js2/Image%5B3%5D.png" alt=""><br>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;关键字：在系统中有特殊语法含义的字。<br>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;保留字：在未来可能会有特殊含义的字。<br><img src="/images/20062601/js2/Image%5B4%5D.png" alt=""><br><img src="/images/20062601/js2/Image%5B5%5D.png" alt=""></p>
+<h3 id="基本语法"><a href="#基本语法" class="headerlink" title="基本语法"></a>基本语法</h3><p>赋值和运算的关系：先将等号右边的式子运算完再赋值给等号左边的值，运算大于赋值的优先级</p>
+<p>计算机的运算与数学运算相似，数学运算实质是仿生计算机运算的</p>
+<p>例如：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = <span class="number">10</span>;</span><br><span class="line"><span class="keyword">var</span> b = <span class="number">20</span>;</span><br><span class="line"><span class="keyword">var</span> c;</span><br><span class="line">c = a + b; <span class="comment">// 30</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="数据类型"><a href="#数据类型" class="headerlink" title="数据类型"></a>数据类型</h4><p>JavaScript是动态语言(分为动态语言和静态语言)，动态语言基本上都是解释性语言，解释性语言基本上都是脚本语言</p>
+<p>解释性语言的特点：声明变量的关键字只有一个，不需要像其他语言一样需要int、float、char、string等关键字。原因是解释性语言在执行时是解释一行执行一行，到当前行时现解释现执行，不用通篇编译</p>
+<p>在声明所有类型的变量时都可以用关键字var来声明，由值来决定数据类型，不需要关注数据类型，并且不同类型的变量可以相互转化，表明解释性语言更加灵活</p>
+<ol>
+<li>原始值(栈数据 stack栈)：Number、Boolean、String、Undefined、Null<br> <strong>数字类型</strong>：浮点型(非整型 intiger)<br> <strong>布尔类型</strong>：表示逻辑的词，true和false<br> <strong>字符串类型</strong>：双引号””或单引号’’包含字符<br> <strong>Undefined类型</strong>：未定义的，表示一个变量经过声明没赋值<code>var a;</code><br> <strong>Null类型</strong>：空值，表示占位。程序中的方法不能直接被删除，就可以用一个空值null来覆盖，以便于后续的利用</li>
+</ol>
+<blockquote>
+<p>不可改变的原始值<br>&emsp;&emsp;电脑(计算机)是因为数字0而被发明的，数字是由阿拉伯人发明的，所以叫做阿拉伯数字。但其实最早是印度人发明的数字，在九世纪的时候，阿拉伯人把印度人给灭了(经历了好几轮灭族)，发现了印度人发明的数字，发现用法很简单，后来阿拉伯人给这个数字加上了加减乘除的运算，从欧洲到亚洲流传开来后就叫做阿拉伯数字<br>&emsp;&emsp;有了数字0后，计算机就诞生了，计算机的语言用01来表示，八位的01010101组成一个字<br>&emsp;&emsp;一个叫做布尔的人发明了逻辑，两个对立逻辑：对的ture和错的false，将逻辑进行了引申，将ture当成了1，把false当成了0，真和假变成了0和1，然后计算机形成了基础的语言</p>
+</blockquote>
+<ol start="2">
+<li>引用值(堆数据 heap堆)：Array、Object、Function、Data、RegExp<br> <strong>数组类型</strong>：[1, 2, 3, false, “abc”]<br> <strong>对象类型</strong>：{name: ‘zc’, age: 18}<br> <strong>函数类型</strong>：function(){}<br> <strong>数据类型</strong>：Data<br> <strong>正则</strong>：/^\d+$/g</li>
+</ol>
+<blockquote>
+<p>原始值和引用值的赋值方法(形式)不同，一个变量的类型由值决定<br>&emsp;&emsp;原始值：将一个值放到另一个值里去，改了第一个值，第二个值不变。<br>&emsp;&emsp;引用值：将一个值放到另一个值里去，改了第一个值，第二个值也跟着变了。</p>
+</blockquote>
+<p>储存位置不同：在计算机中，原始值储存在栈stack中，引用值储存在堆heap中</p>
+<p><strong>原始值</strong>：在声明变量 <code>a</code> 时(var a;)，是向系统申请了一个叫 <code>a</code> 的空间(也可以理解为房间)，在栈stack的 <code>a</code> 空间内存入数值10(var a = 10)；再声明变量 <code>b</code> ( var b;)，又向系统申请一个叫做 <code>b</code> 的空间，将 <code>a</code> 赋值给 <code>b</code> (var b = a;)，这个赋值过程，实际上是将栈stack中 <code>a</code> 的值10先取出，复制(copy)出来再赋值给 <code>b</code> ，所以当给 <code>a</code> 重新赋值20时， <code>b</code> 的值不变依然是10<br><img src="/images/20062601/js2/Image%5B6%5D.png" alt=""><br>&emsp;&emsp;上述情况，关于 <code>a</code> 的重新赋值的问题，如下图解释：<br>&emsp;&emsp;并非是直接在num空间内直接修改数据，而是在栈内重新存入一个新的值，并将新空间叫做<br>num，而之前的数据依然存在，只是空间的名字被抹去，无法再直接使用，直到空间数据满了，被二次利用时，才会用更新的数据来替代<br><img src="/images/20062601/js2/Image%5B7%5D.png" alt=""></p>
+<p><strong>引用值</strong>：在声明数组变量 <code>arr</code> 时(var arr;)，是向系统申请了一个叫做 <code>arr</code> 的空间，在堆(heap)中存入数组 <code>[1, 2]</code> (var arr = [1, 2];)，并将堆中存储数值的位置存入栈(stack) <code>arr</code><br>中；再声明数组变量 <code>arr1</code> (var arr1;)，又向系统申请了一个叫做 <code>arr1</code> 的空间，并将 <code>arr</code> 赋值给 <code>arr1</code> (var arr1 = arr;)，这个赋值过程，实际上是将 <code>arr</code> 储存在堆中的值的地址取出，复制(copy)出来再赋值给 <code>arr1</code> ，也就是 <code>arr</code> 和 <code>arr1</code> 共用同一个地址，都指向同一个堆的值。向 <code>arr</code> 添加一个新值3(arr.push(3);)，此时修改的是原数组，所以 <code>arr1</code> 的值也跟着变为[1, 2, 3]<br><img src="/images/20062601/js2/Image%5B8%5D.png" alt=""></p>
+<p>&emsp;&emsp;关于引用值，还有另外一种情况：<br>&emsp;&emsp;当给 <code>arr</code> 重新赋值[1, 3]时，实际上是向系统申请了一个新的空间，并将[1, 3]存入新的空间内，再将 <code>arr</code> 的值变为新空间的地址 <code>heap1002</code> ，所以 <code>arr1</code> 的值不变。<br><img src="/images/20062601/js2/Image%5B9%5D.png" alt=""></p>
+<blockquote>
+<p>电子设备(相机、内存卡等)的内存数据被删除时，实际上只是删除了数据与名称间的关系，无法直接再获取数据，但是之前得数据还存在。即使删除了数据，但是内存格中依然存在数据，用专门的设备就能将原来的名字、标号、指针将数据还原回来。所以删除数据，实际上就是将名字删除了，但是内容还在。如果想彻底的删除掉内存中的数据，可以将所有内容删除后，重新再将内存填满，这叫做二次覆盖</p>
+</blockquote>
+<h4 id="基本语法-1"><a href="#基本语法-1" class="headerlink" title="基本语法"></a>基本语法</h4><ol>
+<li><p>语句后面需要用分号”;”结束(分隔)<br> 不需要加分号的语句：函数、for循环、if判断</p>
+</li>
+<li><p>js语法错误会引发后续代码终止，但不会影响其他js代码块<br> 错误：<br>&emsp;&emsp;①低级错误(语法解析错误)：浏览器在渲染之前，会通篇查看页面是否有语法错误，若有错则页面报错，且不会执行渲染操作(一行都不执行)<br><img src="/images/20062601/js2/Image%5B10%5D.png" alt=""><br>&emsp;&emsp;②逻辑错误(标准错误，情有可原)：当浏览器渲染至错误行时，报错后的代码不会执行<br><img src="/images/20062601/js2/Image%5B11%5D.png" alt=""><br>&emsp;&emsp;要点：无论哪种错误，一个代码块的错误都不会影响到另一个代码块的执行<br>&emsp;&emsp;低级错误：<br><img src="/images/20062601/js2/Image%5B12%5D.png" alt="">)<img src="/images/20062601/js2/Image%5B13%5D.png" alt=""><br>&emsp;&emsp;逻辑错误：<br><img src="/images/20062601/js2/Image%5B14%5D.png" alt="">)<img src="/images/20062601/js2/Image%5B15%5D.png" alt=""></p>
+</li>
+<li><p>书写格式规范，”= + / -“等符号的两侧都需要加空格</p>
+</li>
+</ol>
+<h4 id="js运算符-–-运算操作符"><a href="#js运算符-–-运算操作符" class="headerlink" title="js运算符 – 运算操作符"></a>js运算符 – 运算操作符</h4><ol>
+<li><p>关于 “+”<br>① 数学运算、字符串连接<br>② 任何数据类型加字符串都等于字符串</p>
+<p> <strong>赋值顺序：自右向左，可以连续赋值</strong><br> <strong>运算顺序：自左向右，先乘除后加减</strong><br> 先计算后赋值</p>
+</li>
+<li><p>“-“、”*”、”/“、”% 取余”、”=”、”()”<br>注意点：<br>&emsp;&emsp;0不能除以0，但是0/0也不会报错，会返回NaN(Not A Number 非数，是一种数据类型)<br>&emsp;&emsp;1/0 ==&gt; Infinity(正无穷)<br>&emsp;&emsp;-1/0 ==&gt; -Infinity(负无穷)</p>
+</li>
+<li><p>优先级”=”最弱，”()”最高</p>
+</li>
+<li><p>“++”、”–”、”+=”、”-=”、”/=”、”*=”、”%=”<br>&emsp;&emsp;”++ / –”：自身加 / 减1，再赋值给自身<br><img src="/images/20062601/js2/Image%5B16%5D.png" alt=""><br><img src="/images/20062601/js2/Image%5B17%5D.png" alt=""></p>
+</li>
+</ol>
+<h4 id="js运算符-–-比较运算符"><a href="#js运算符-–-比较运算符" class="headerlink" title="js运算符 – 比较运算符"></a>js运算符 – 比较运算符</h4><p>“&gt;”、”&lt;”、”==”、”&gt;=”、”&lt;=”、”!=”</p>
+<p>比较运算符的结果是Boolean<br>字符串，比较的是阿斯克码(asc)的顺序，每个字符对应着阿斯克码0-127，<br>Infinity == Infinity // true<br><strong>NaN不等于任何值，包括自己</strong></p>
+<h4 id="逻辑运算符-–-“-amp-amp-”、”-”、”！”"><a href="#逻辑运算符-–-“-amp-amp-”、”-”、”！”" class="headerlink" title="逻辑运算符 – “&amp;&amp;”、”||”、”！”"></a>逻辑运算符 – “&amp;&amp;”、”||”、”！”</h4><p><em>undefined、null、NaN、””、0、false</em> ==&gt; false（转换为Boolean）</p>
+<p>&emsp;&emsp;”&amp;&amp;”：先看运算符前第一个表达式转换为Boolean值是否为真，如果结果为真再看下一个表达式转化为Boolean值的结果，如果当前表达式为false，则直接返回当前表示；如果前面的表达式都为真，则返回最后一个表达式的值。遇到false就返回<br>&emsp;&emsp;&emsp;&emsp;&emsp;”全真才为真，有一个假就是假” ==&gt; 实际是将返回结果转化为布尔值<br>&emsp;&emsp;&emsp;&emsp;&emsp;总结：从第一个表达式开始，为真就依次向后找，直至遇到false的表达式后返回结果，或者直到最后一个表示时，直接返回表达式的结果</p>
+<p>&emsp;&emsp;&emsp;&emsp;&emsp;短路语句：有中断的作用， 如果前一个表达式是真，才能执行下一个。if的简写形式<br>&emsp;&emsp;&emsp;&emsp;&emsp;用法：在获取数据data后，需要判断data内的数据是否可用，通过”&amp;&amp;”运算符执行一个语句，判断data是否可用<br>例如：<img src="/images/20062601/js2/Image%5B18%5D.png" alt=""></p>
+<p>&emsp;&emsp;单独”&amp;”，无意义。可作为”与运算”：二进制，相同为1，不同为0<br>&emsp;&emsp;1 &amp; 3; // 1</p>
+<p>&emsp;&emsp;”||”：遇到true(真)就返回，遇到false就继续向后找，直到找到为true的结果。如果前边的表达式都为false，则直接返回最后一个的值<br>&emsp;&emsp;&emsp;&emsp;&emsp;”全假才为假，有一个真就是真” ==&gt; 指返回结果的Boolean</p>
+<p>&emsp;&emsp;”&amp;&amp;”与”||”互为对立。<br>&emsp;&emsp;”!”：将表达式转化为Boolean后再取反<br>&emsp;&emsp;”!!”：取反再取反变Boolean值</p>
+<h4 id="条件语句"><a href="#条件语句" class="headerlink" title="条件语句"></a>条件语句</h4><ol>
+<li>if、eles if<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 条件成立(true)时，执行语句</span></span><br><span class="line"><span class="keyword">if</span>( 条件 ) &#123;</span><br><span class="line">    <span class="comment">// 执行语句</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<img src="/images/20062601/js2/Image%5B19%5D.png" alt=""></li>
+</ol>
+<p>&emsp;&emsp;当多个条件是互斥(条件之间没有重叠部分)时，可以使用else if</p>
+<p>&emsp;&emsp;if 与 “&amp;&amp;”的转换<br><img src="/images/20062601/js2/Image%5B20%5D.png" alt=""></p>
+<ol start="2">
+<li>for循环<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(声明变量; 循环条件; 变量增量) &#123;</span><br><span class="line">    <span class="comment">// 执行循环体</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+&emsp;&emsp;在循环时执行顺序：<br><img src="/images/20062601/js2/Image%5B21%5D.png" alt=""><br>&emsp;&emsp;重复执行(2)(3)步骤，直到条件(2)不成立时，结束循环<br>&emsp;&emsp;示例代码：<br><img src="/images/20062601/js2/Image%5B22%5D.png" alt=""><br>&emsp;&emsp;得到结果：打印十个a</li>
+</ol>
+<p>&emsp;&emsp;<strong>for循环其他形式的写法</strong>：<br>&emsp;&emsp;&emsp;&emsp;① 在循环外声明变量，在循环体内进行变量增加<br><img src="/images/20062601/js2/Image%5B23%5D.png" alt=""><br>&emsp;&emsp;&emsp;&emsp;② for循环内什么条件都不写<br><img src="/images/20062601/js2/Image%5B24%5D.png" alt=""><br>&emsp;&emsp;&emsp;&emsp;③ for循环内只写一句<br><img src="/images/20062601/js2/Image%5B25%5D.png" alt=""></p>
+<ol start="3">
+<li><p>while循环<br>注意：当条件为1(true)时，就会never-ending loop（死循环）</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> 初始变量值;</span><br><span class="line"><span class="keyword">while</span>(条件) &#123;</span><br><span class="line">    <span class="comment">// 循环体</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="/images/20062601/js2/Image%5B26%5D.png" alt=""></p>
+</li>
+<li><p>do…while循环<br>无论条件是否成立，都先执行循环体(几乎不用)</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> 声明变量;</span><br><span class="line"><span class="keyword">do</span> &#123;</span><br><span class="line">    <span class="comment">// 循环体</span></span><br><span class="line">&#125; <span class="keyword">while</span> (i &lt; <span class="number">0</span>)</span><br><span class="line">![](<span class="regexp">/images/</span><span class="number">20062601</span>/js2/Image[<span class="number">27</span>].png)</span><br></pre></td></tr></table></figure>
+<blockquote>
+<ol>
+<li>n可输入：var n<br>= parseInt(window.prompt(‘input’));(弹出式输入框)\</li>
+</ol>
+</blockquote>
+</li>
+<li><p>阶乘：<br> 5! = 5 * 4 * 3 * 2 * 1;\</p>
+</li>
+<li><p>斐波那契数列：当前位等于前两位的和，求第四位的值需要知道二三位的数值\</p>
+</li>
+<li><p>由于js的数字类型是浮点数，在1/3时，得到的是小数。所以也会有整除却无法得到整数的情况\</p>
+</li>
+<li><p>质数：又叫素数，只能被1和它本身整除的数(更准确的解释是：从1一直除到它本身，能被两个数整除。所以1不是素数，也不是合数。从2开始)</p>
+</li>
+</ol>
+<h4 id="条件语句补充"><a href="#条件语句补充" class="headerlink" title="条件语句补充"></a>条件语句补充</h4><ol>
+<li><p><strong>switch case</strong> 条件判断语句</p>
+<p> <em>条件可以是任何类型的数据</em></p>
+<p> 从上之下，当遇到case值与条件值相等时，就执行当前case内的语句，并且会再向下继续执行，直到执行完最后一个，在每个case的执行语句后加上break就可以终止判断</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">switch</span>(条件) &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">"a"</span>:</span><br><span class="line">        <span class="comment">// 条件为 1 时，执行语句</span></span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> <span class="number">2</span>:</span><br><span class="line">        <span class="comment">// 条件为 2 时，执行语句</span></span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">        <span class="comment">//  以上条件都不满足时，执行语句</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p><strong>break</strong> 终止循环，并且必须写在循环内</p>
+</li>
+<li><p><strong>continue</strong> 中止本次循环，进行下一次循环</p>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/12/23/%E5%89%8D%E7%AB%AF%E4%B9%8B%E8%B7%AF%E7%9A%84%E5%9F%BA%E7%9F%B3-JavaScript%E2%91%A0/" rel="prev" title="前端之路的基石-JavaScript①">
+      <i class="fa fa-chevron-left"></i> 前端之路的基石-JavaScript①
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/12/23/%E5%89%8D%E7%AB%AF%E4%B9%8B%E8%B7%AF%E7%9A%84%E5%9F%BA%E7%9F%B3-JavaScript%E2%91%A2/" rel="next" title="前端之路的基石-JavaScript③">
+      前端之路的基石-JavaScript③ <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#JavaScript引入"><span class="nav-number">1.</span> <span class="nav-text">JavaScript引入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Js基本语法"><span class="nav-number">2.</span> <span class="nav-text">Js基本语法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#变量"><span class="nav-number">2.1.</span> <span class="nav-text">变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基本语法"><span class="nav-number">2.2.</span> <span class="nav-text">基本语法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#数据类型"><span class="nav-number">2.2.1.</span> <span class="nav-text">数据类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#基本语法-1"><span class="nav-number">2.2.2.</span> <span class="nav-text">基本语法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#js运算符-–-运算操作符"><span class="nav-number">2.2.3.</span> <span class="nav-text">js运算符 – 运算操作符</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#js运算符-–-比较运算符"><span class="nav-number">2.2.4.</span> <span class="nav-text">js运算符 – 比较运算符</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#逻辑运算符-–-“-amp-amp-”、”-”、”！”"><span class="nav-number">2.2.5.</span> <span class="nav-text">逻辑运算符 – “&amp;&amp;”、”||”、”！”</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#条件语句"><span class="nav-number">2.2.6.</span> <span class="nav-text">条件语句</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#条件语句补充"><span class="nav-number">2.2.7.</span> <span class="nav-text">条件语句补充</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="zoe"
+      src="https://tvax2.sinaimg.cn/crop.0.0.960.960.180/b4866dcfly8fp6p33spu1j20qo0qomz2.jpg?Expires=1564549093&ssig=e3yJPxIPmx&KID=imgbed,tva">
+  <p class="site-author-name" itemprop="name">zoe</p>
+  <div class="site-description" itemprop="description">做自己喜欢的事情，为喜欢的事情而努力</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">26</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/zoe-zc" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;zoe-zc" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zoe</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

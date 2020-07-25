@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/ego-blog%20(1).png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/ego-blog.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto Slab:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="主流浏览器及其内核主流浏览器的特点 在市场上占有一定份额 必须有独立研发的内核  浏览器由shell(浏览器的操作类的展示部分，也就是外壳：菜单及展示页面的部分)和内核(浏览器的快慢、识别代码路径、优化问题)组成 内核 IE：内核 trident（1996年发布IE1.0） FireFox：内核 Gecko Google Chrome：内核 Webkit 与苹果工程师共同研发&#x2F;内核 blink 0">
+<meta property="og:type" content="article">
+<meta property="og:title" content="前端之路的基石-CSS">
+<meta property="og:url" content="http://yoursite.com/2018/12/23/%E5%89%8D%E7%AB%AF%E4%B9%8B%E8%B7%AF%E7%9A%84%E5%9F%BA%E7%9F%B3-CSS/index.html">
+<meta property="og:site_name" content="Zoe">
+<meta property="og:description" content="主流浏览器及其内核主流浏览器的特点 在市场上占有一定份额 必须有独立研发的内核  浏览器由shell(浏览器的操作类的展示部分，也就是外壳：菜单及展示页面的部分)和内核(浏览器的快慢、识别代码路径、优化问题)组成 内核 IE：内核 trident（1996年发布IE1.0） FireFox：内核 Gecko Google Chrome：内核 Webkit 与苹果工程师共同研发&#x2F;内核 blink 0">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/images/20060601/CSS_files/Image.png">
+<meta property="og:image" content="http://yoursite.com/images/20060601/CSS_files/Image%5B1%5D.png">
+<meta property="og:image" content="http://yoursite.com/images/20060601/CSS_files/Image%5B2%5D.png">
+<meta property="og:image" content="http://yoursite.com/images/20060601/CSS_files/Image%5B3%5D.png">
+<meta property="og:image" content="http://yoursite.com/images/20060601/CSS_files/Image%5B4%5D.png">
+<meta property="og:image" content="http://yoursite.com/images/20060601/CSS_files/Image%5B5%5D.png">
+<meta property="og:image" content="http://yoursite.com/images/20060601/CSS_files/Image%5B6%5D.png">
+<meta property="og:image" content="http://yoursite.com/images/20060601/CSS_files/Image%5B7%5D.png">
+<meta property="og:image" content="http://yoursite.com/images/20060601/CSS_files/Image%5B8%5D.png">
+<meta property="og:image" content="http://yoursite.com/images/20060601/CSS_files/Image%5B9%5D.png">
+<meta property="og:image" content="http://yoursite.com/images/20060601/CSS_files/Image%5B10%5D.png">
+<meta property="og:image" content="http://yoursite.com/images/20060601/CSS_files/Image%5B11%5D.png">
+<meta property="og:image" content="http://yoursite.com/images/20060601/CSS_files/Image%5B12%5D.png">
+<meta property="og:image" content="http://yoursite.com/images/20060601/CSS_files/Image%5B13%5D.png">
+<meta property="og:image" content="http://yoursite.com/images/20060601/CSS_files/Image%5B14%5D.png">
+<meta property="og:image" content="http://yoursite.com/images/20060601/CSS_files/Image%5B15%5D.png">
+<meta property="og:image" content="http://yoursite.com/images/20060601/CSS_files/Image%5B16%5D.png">
+<meta property="og:image" content="http://yoursite.com/images/20060601/CSS_files/Image%5B17%5D.png">
+<meta property="article:published_time" content="2018-12-23T01:49:48.000Z">
+<meta property="article:modified_time" content="2020-06-22T08:29:41.738Z">
+<meta property="article:author" content="zoe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/images/20060601/CSS_files/Image.png">
+
+<link rel="canonical" href="http://yoursite.com/2018/12/23/%E5%89%8D%E7%AB%AF%E4%B9%8B%E8%B7%AF%E7%9A%84%E5%9F%BA%E7%9F%B3-CSS/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>前端之路的基石-CSS | Zoe</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Zoe</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">zoe's blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/zoe-zc" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/23/%E5%89%8D%E7%AB%AF%E4%B9%8B%E8%B7%AF%E7%9A%84%E5%9F%BA%E7%9F%B3-CSS/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://tvax2.sinaimg.cn/crop.0.0.960.960.180/b4866dcfly8fp6p33spu1j20qo0qomz2.jpg?Expires=1564549093&ssig=e3yJPxIPmx&KID=imgbed,tva">
+      <meta itemprop="name" content="zoe">
+      <meta itemprop="description" content="做自己喜欢的事情，为喜欢的事情而努力">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zoe">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          前端之路的基石-CSS
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-12-23 09:49:48" itemprop="dateCreated datePublished" datetime="2018-12-23T09:49:48+08:00">2018-12-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-06-22 16:29:41" itemprop="dateModified" datetime="2020-06-22T16:29:41+08:00">2020-06-22</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="主流浏览器及其内核"><a href="#主流浏览器及其内核" class="headerlink" title="主流浏览器及其内核"></a>主流浏览器及其内核</h2><h3 id="主流浏览器的特点"><a href="#主流浏览器的特点" class="headerlink" title="主流浏览器的特点"></a>主流浏览器的特点</h3><ol>
+<li>在市场上占有一定份额</li>
+<li>必须有独立研发的内核</li>
+</ol>
+<p>浏览器由shell(浏览器的操作类的展示部分，也就是外壳：菜单及展示页面的部分)和内核(浏览器的快慢、识别代码路径、优化问题)组成</p>
+<h3 id="内核"><a href="#内核" class="headerlink" title="内核"></a>内核</h3><ol>
+<li>IE：内核 trident（1996年发布IE1.0）</li>
+<li>FireFox：内核 Gecko</li>
+<li>Google Chrome：内核 Webkit 与苹果工程师共同研发/内核 blink 08年自主研发 2014年投入市场（全球市场份额第一，在2016年年终超越了IE）</li>
+<li>Safari：内核  Webkit</li>
+<li>Opera（份额5%~3%）：内核 presto</li>
+</ol>
+<h2 id="注释"><a href="#注释" class="headerlink" title="注释"></a>注释</h2><ol>
+<li>给代码做备注</li>
+<li>调试：将代码按照区块注释来找到错误位置<br>HTML：<img src="/images/20060601/CSS_files/Image.png" alt=""></li>
+</ol>
+<h2 id="CSS-cascading-style-sheet-层叠样式表"><a href="#CSS-cascading-style-sheet-层叠样式表" class="headerlink" title="CSS(cascading style sheet) 层叠样式表"></a>CSS(cascading style sheet) 层叠样式表</h2><p>CSS的作用：修改HTML的样式</p>
+<h3 id="引入CSS"><a href="#引入CSS" class="headerlink" title="引入CSS"></a>引入CSS</h3><ol>
+<li>行间样式：在标签内通过style属性设置元素样式 </li>
+<li>页面级css：在head标签内写样式</li>
+<li>外部css文件：新建一个.css文件并在head标签内通过link标签引入<br><img src="/images/20060601/CSS_files/Image%5B1%5D.png" alt=""></li>
+</ol>
+<blockquote>
+<p>html文件是怎样引入到页面的？<br>将网页(HTML、css、js)的文件打包后放在服务器(也是电脑)上，用户通过访问网站，拿到服务器的地址后，获取网页文件下载到自己的电脑的浏览器上执行。例如访问百度，是将百度的网页下载到自己的手机上，而不是所有人访问同一个文件，访问的是服务器文件的副本。</p>
+</blockquote>
+<blockquote>
+<p>浏览器是怎么执行下载的文件的？<br>从上至下，下载一行就执行一行代码。<br>在下载的时候，head标签内引入一个css文件，此时浏览器如何执行？<br>异步加载，此时浏览器会开启一个新的线程来下载css文件，原线程会继续下载HTML，所以是同时进行的。</p>
+</blockquote>
+<blockquote>
+<p>补充知识点：<br>异步与同步：异步是指同时执行多个事件；同步是指完成当前事件后才可执行下一个事件；</p>
+</blockquote>
+<h2 id="选择器"><a href="#选择器" class="headerlink" title="选择器"></a>选择器</h2><p>用来选择一个html元素，从而来改变其样式</p>
+<ol>
+<li><p>id选择器：identity(身份) 一对一的关系，一个元素只能有一个id值</p>
+</li>
+<li><p>class选择器：多对多的关系，一个元素可以有多个class，一个class也可以作用于多个元素</p>
+</li>
+<li><p>标签选择器：会选中当前文件内所有的标签元素</p>
+</li>
+<li><p>通配符选择器：所有标签，整个文档的标签</p>
+</li>
+<li><p>父子选择器/派生选择器：父子结构即可</p>
+</li>
+<li><p>直接子元素选择器：用符号’&gt;’连接父子级选择器即可</p>
+<p> 一个多层级的父子结构样式的元素，浏览器是如何找到的呢？<br> <img src="/images/20060601/CSS_files/Image%5B2%5D.png" alt=""><br> dom是树状结构，按照上图从右向左的顺序查找元素，先在整个DOM结构中找到em元素，确定em元素后再向上找到相应的元素，这样以最快的速度找到元素。如果从左向右查找，需要先在整个dom树中的所有元素中查找第一个元素section，然后在找到的每个元素section下再查找其余所有元素来找到第二个元素div，这种方式更加繁琐。</p>
+</li>
+<li><p>并列选择器：两个选择器选择的同一个元素</p>
+</li>
+<li><p>分组选择器：<br><img src="/images/20060601/CSS_files/Image%5B3%5D.png" alt=""></p>
+</li>
+</ol>
+<h3 id="选择器优先级"><a href="#选择器优先级" class="headerlink" title="选择器优先级"></a>选择器优先级</h3><p><img src="/images/20060601/CSS_files/Image%5B4%5D.png" alt=""></p>
+<h2 id="css权重"><a href="#css权重" class="headerlink" title="css权重"></a>css权重</h2><p>256进制(IE7.0版本测试出来的数据)<br>当两个元素的权重相同时，后渲染的元素css生效</p>
+<h3 id="权重的应用：复杂选择器的计算"><a href="#权重的应用：复杂选择器的计算" class="headerlink" title="权重的应用：复杂选择器的计算"></a>权重的应用：复杂选择器的计算</h3><p><img src="/images/20060601/CSS_files/Image%5B5%5D.png" alt=""></p>
+<p>在计算机中，正无穷计算时，可以相加减来比较大小。</p>
+<h2 id="css属性"><a href="#css属性" class="headerlink" title="css属性"></a>css属性</h2><p>css代码都是由属性组成的，结构为：”属性名: 属性值;”，属性和属性之间通过”;”分号来分隔</p>
+<ol>
+<li><p>font-size：字体大小，浏览器由默认的字体大小16px，字体大小设置的是字体的高（仿宋字体宽高相等）</p>
+</li>
+<li><p>font-weight：字体加粗，可选值： lighter、normal、bold、bolder、数值(100 ~ 900 从细到粗)</p>
+<blockquote>
+<p>浏览器有相应的字体包才能展示相应的样式</p>
+</blockquote>
+</li>
+<li><p>font-style：斜体，值：italic</p>
+</li>
+<li><p>font-family：字体，值： arial(通用字体，乔布斯在苹果发明第一个就是字体)</p>
+</li>
+<li><p>color：字体颜色，值：英文单词(red)、颜色代码(#ff0000)、颜色函数(rgb(255,0,0))</p>
+<blockquote>
+<p>人类可以识别三种颜色(三原色: 红绿蓝)<br>颜色代码从00-ff代表颜色的饱和度，若颜色代码的每两位都是重复的就可以简写为三位</p>
+</blockquote>
+</li>
+<li><p>border：元素的边框<br>复合属性：border-width粗细、border-style虚实样式、border-color颜色<br>border-style：solid 实线、dotted 点状虚线、dashed 条状虚线</p>
+<p>将宽高设置为0，为border设置宽度和颜色，利用斜线即可画出三角形</p>
+<p>border-radius：圆角度，当值为50%时， 正方形会变成一个圆形</p>
+</li>
+<li><p>text-align：文字对齐方式，属性值：left(默认值)、center、right</p>
+</li>
+<li><p>line-height：单行文本所占高度</p>
+<blockquote>
+<p>行高：文字所占高度（在word中叫做行间距）<br>单行文字水平垂直居中：文本所占高度等于容器高度时，文本在容器内垂直居中</p>
+</blockquote>
+</li>
+<li><p>text-indent：文本缩进</p>
+<blockquote>
+<p>单位分为绝对单位和相对单位，例如像素px、em是相对单位</p>
+</blockquote>
+<blockquote>
+<p>px：一个像素只能展示一个颜色；电子屏幕由无数个很小很小的像素格组成的，一个屏幕的清晰与否关键在于像素的多少。屏幕分辨率在国际上的标准定义是每英寸所能容纳的垂直像素点数，也就是像素的个数决定了屏幕分辨率。一个像素的大小是可以改变的，同等大小的屏幕，像素越多，成像约清晰，分辨率也越高。</p>
+</blockquote>
+<blockquote>
+<p>em：相对于font-size的大小<br>   公式：1em = 1 * 该标签的font-size（1em等于1font-size，在设置文字(中文)缩进时，1em就相当于一个字的大小）<br>   文字的行高是1.2倍行高(1.2倍文字大小)，也就是 line-height：1.2em;</p>
+</blockquote>
+</li>
+<li><p>text-decoration：文字修饰线<br>属性值：<br>line-through 中划线(删除线)，功能等同于标签del<br>none 没有线，去掉标签自带的线<br>underline 下划线，类似a标签自带样式<br>overline 上划线，不常用</p>
+</li>
+<li><p>cursor：光标，鼠标在标签上的样式<br>属性值：pointer：小手<br>鼠标上的光标的定位值，好的鼠标不需要在黑色位置也可以使用</p>
+</li>
+</ol>
+<p>查看其他更多属性：<a href="https://www.html.cn/doc/css3/quicksearch/" target="_blank" rel="noopener">https://www.html.cn/doc/css3/quicksearch/</a></p>
+<h2 id="伪类选择器"><a href="#伪类选择器" class="headerlink" title="伪类选择器"></a>伪类选择器</h2><blockquote>
+<p>当在行间样式设置后，无法在伪类选择器中改变样式(原因是权重是10，小于行间样式1000)</p>
+</blockquote>
+<ol>
+<li>:hover 鼠标移动到标签上后展示所设置的样式</li>
+</ol>
+<h2 id="企业级开发思路"><a href="#企业级开发思路" class="headerlink" title="企业级开发思路"></a>企业级开发思路</h2><ol>
+<li><p>点定义功能，后选定功能：先写出需要的CSS样式，就相当于写了一个工具库，需要的样式拿出来用<br>优点：先定义好功能样式，也可以封装好一个css文件，其他人就可以直接引用<br><img src="/images/20060601/CSS_files/Image%5B6%5D.png" alt=""></p>
+</li>
+<li><p>自定义标签(初始化样式)：通过改变标签的默认样式，也就是标签初始化<br>下图列举了改变标签默认样式的实例：<br><img src="/images/20060601/CSS_files/Image%5B7%5D.png" alt=""></p>
+<p> 通配符选择器* 可以用来初始化所有标签的margin和padding的值，并且其权重值为0，所以在初始化后，也可以通过其他选择器来随意改变初始化的值，不需要考虑权重问题。</p>
+</li>
+</ol>
+<h2 id="盒子模型"><a href="#盒子模型" class="headerlink" title="盒子模型"></a>盒子模型</h2><p>盒子的宽度/高度 = 边框 +内边距 + 宽度/高度</p>
+<p>内边距padding是不可以放内容的(例如文字)，也就是说内容不会占padding的位置，但是背景色或背景图片可以<br><img src="/images/20060601/CSS_files/Image%5B8%5D.png" alt=""></p>
+<p>在浏览器中展示的盒子模型，如下图：<br><img src="/images/20060601/CSS_files/Image%5B9%5D.png" alt=""></p>
+<p>padding、margin、border的值：<br>一个值：上下左右相同<br>四个值：值的方向为上 右 下 左，为顺时针方向<br>三个值：值为上 左右 下，其中左右相等为中间的值<br>两个值：值为上下 左右，第一个是上下的值，第二个是左右的值</p>
+<h2 id="层模型"><a href="#层模型" class="headerlink" title="层模型"></a>层模型</h2><p>定位positon：让特定的元素在特定的位置出现，也叫作层模型<br>定位需要参照物，relative作为参照物，absolute来进行定位，从而减少对后边元素的影响。</p>
+<ol>
+<li><p>absolute 绝对定位，脱离原来位置进行定位，</p>
+<p> 相对于最近的有定位的父级进行定位，如果没有，则相对于文档进行定位</p>
+<p> 当一个元素变成绝对定位的元素时，它就脱离了原来的层级，跑到上面的层级上了，原来的位置被释放。这样，这个元素后面的元素就可以来到它之前的位置，这样就会形成同一位置的层级关系，也就是层模型。</p>
+</li>
+<li><p>relative 相对定位 ，保留原来位置进行定位</p>
+<p> 相对于自己原来的位置进行定位</p>
+<blockquote>
+<p>浏览器中默认的body的margin值是多少？<br> 答：8px</p>
+</blockquote>
+<p> opacity：不透明度，取值为0~1 值越小越透明</p>
+</li>
+<li><p>fixed 固定定位</p>
+<p> z-index：设置定位元素的层级，默认为0。z也就是z轴，指向与屏幕方向相垂直。</p>
+</li>
+</ol>
+<h2 id="居中布局问题"><a href="#居中布局问题" class="headerlink" title="居中布局问题"></a>居中布局问题</h2><p>一个元素已知宽高，在视窗口中水平垂直居中<br><img src="/images/20060601/CSS_files/Image%5B10%5D.png" alt=""></p>
+<h3 id="两栏布局：一个固定宽度，另一个自适应宽度"><a href="#两栏布局：一个固定宽度，另一个自适应宽度" class="headerlink" title="两栏布局：一个固定宽度，另一个自适应宽度"></a>两栏布局：一个固定宽度，另一个自适应宽度</h3><p><img src="/images/20060601/CSS_files/Image%5B11%5D.png" alt=""></p>
+<h3 id="margin两个经典bug"><a href="#margin两个经典bug" class="headerlink" title="margin两个经典bug"></a>margin两个经典bug</h3><p>① margin-top塌陷问题：父子层级的两个元素的垂直方向margin会重叠再取最大的值，给子元素设置margin-top后，父级会随同子元素移动，这个问题就是margin塌陷问题，可以看做父级没有顶造成的。</p>
+<p>解决办法：</p>
+<ol>
+<li>给父级设置border-top 可以解决问题，但是在语法和编程手法上不可取，并且不符合设计图</li>
+<li>BFC (block format context 块级格式化上下文)  并非真正解决问题，只是一个弥补问题的手段<br> 如何触发一个盒子的bfc：<pre><code>a. 给元素设置定位 position: absolute
+b. display: inline-block
+c. float: left/right
+d. overflow: hidden(自身意义：溢出盒子部分不展示) 给父级添加该属性，实际是改变了父级的渲染规则，父级变为bfc后，即可解决塌陷问题</code></pre>上述问题，需要给父级添加css样式即可解决问题  </li>
+</ol>
+<p>② 左右相邻的兄弟元素的margin是相累加的，这叫做区域不能共用，这是正常的语法规则</p>
+<p>上下两个相邻的兄弟元素的margin值是相叠加的，且取最大值</p>
+<p>上述问题，解决的办法是给元素外层加一层父级，但是不建议这种解决办法。最好的解决办法是只给一个元素设置margin-top或margin-bottom的值</p>
+<h3 id="浮动模型"><a href="#浮动模型" class="headerlink" title="浮动模型"></a>浮动模型</h3><p>无论元素是什么样的陈列方式(inline、block、inline-block)，都可以使元素站队，并且站队的边界是父级的边界</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">   float: left&#x2F;right;</span><br></pre></td></tr></table></figure>
+<p>   原理：浮动元素产生了浮动流，所有产生了浮动流的元素，块级元素都看不到(也就是会分层)，但是产生了bfc的元素和文本类元素(带有Inline属性的元素)以及文本都可以看到(也就是紧挨着元素而不分层)。  </p>
+<p>   <strong>清除浮动的方法</strong>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">clear: left&#x2F;right&#x2F;both 注意：清除浮动的元素必须是块级元素</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>伪元素：存在于每个元素中，一般有::before、::after可以同时使用，可以当做正常元素来使用<br>伪元素是行级元素，设置宽高需要设置display: inline-block</p>
+</blockquote>
+<p>   <strong>通过给父级添加伪元素清除浮动</strong>：<br><img src="/images/20060601/CSS_files/Image%5B12%5D.png" alt="">  </p>
+<blockquote>
+<p>position: absolute、float: left/right 将元素内部转化为inline-block属性，内容撑开宽高<br>   例如：span元素设置了上述属性后，就可以设置宽高了  </p>
+</blockquote>
+<h2 id="文字溢出处理"><a href="#文字溢出处理" class="headerlink" title="文字溢出处理"></a>文字溢出处理</h2><p>文字超出容器后，用省略号…展示</p>
+<ol>
+<li><p>单行文本  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">white-space: nowrap; 强制文字不换行  </span><br><span class="line">text-overflow: ellipsis; 文字超出后用...展示</span><br></pre></td></tr></table></figure>
+<p><img src="/images/20060601/CSS_files/Image%5B13%5D.png" alt=""></p>
+</li>
+<li><p>多行文本：不做文字省略，只做文本截断(只展示固定行数，剩下字数隐藏不展示)<br><img src="/images/20060601/CSS_files/Image%5B14%5D.png" alt="">  </p>
+</li>
+</ol>
+<h2 id="背景图片处理"><a href="#背景图片处理" class="headerlink" title="背景图片处理"></a>背景图片处理</h2><p>background:<br><img src="/images/20060601/CSS_files/Image%5B15%5D.png" alt=""></p>
+<h3 id="企业级开发问题"><a href="#企业级开发问题" class="headerlink" title="企业级开发问题"></a>企业级开发问题</h3><p>图片如何代替文字：  </p>
+<p>一旦浏览器采取了默认加载策略(当前网络不好时，css和js会自动屏蔽掉)，还得让网站可用。<br><img src="/images/20060601/CSS_files/Image%5B16%5D.png" alt=""><br><img src="/images/20060601/CSS_files/Image%5B17%5D.png" alt="">  </p>
+<p><strong>行级元素可以嵌套行级元素 span只能嵌套行级元素，a标签内不可以嵌套a标签</strong><br><strong>块级元素可以嵌套任何元素，div可以嵌套任何元素，但是p标签不可以嵌套块级元素</strong>  </p>
+<h2 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h2><p>margin: 0 auto; 可以使设置了宽度的元素居中展示，并且浏览器宽度变化时随之改变</p>
+<p>带有inline的元素属于文本类元素，span、img标签等 删除标签间的空格，可以去掉空白间隙</p>
+<p>vertical-align: 数值/middle等值; 调节文本对齐的属性。文本默认与文本类元素内的文字底部对齐</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/12/23/%E5%89%8D%E7%AB%AF%E4%B9%8B%E8%B7%AF%E7%9A%84%E5%9F%BA%E7%9F%B3-HTML/" rel="prev" title="前端之路的基石-HTML">
+      <i class="fa fa-chevron-left"></i> 前端之路的基石-HTML
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/12/23/%E5%89%8D%E7%AB%AF%E4%B9%8B%E8%B7%AF%E7%9A%84%E5%9F%BA%E7%9F%B3-JavaScript%E2%91%A0/" rel="next" title="前端之路的基石-JavaScript①">
+      前端之路的基石-JavaScript① <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#主流浏览器及其内核"><span class="nav-number">1.</span> <span class="nav-text">主流浏览器及其内核</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#主流浏览器的特点"><span class="nav-number">1.1.</span> <span class="nav-text">主流浏览器的特点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#内核"><span class="nav-number">1.2.</span> <span class="nav-text">内核</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#注释"><span class="nav-number">2.</span> <span class="nav-text">注释</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CSS-cascading-style-sheet-层叠样式表"><span class="nav-number">3.</span> <span class="nav-text">CSS(cascading style sheet) 层叠样式表</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#引入CSS"><span class="nav-number">3.1.</span> <span class="nav-text">引入CSS</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#选择器"><span class="nav-number">4.</span> <span class="nav-text">选择器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#选择器优先级"><span class="nav-number">4.1.</span> <span class="nav-text">选择器优先级</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#css权重"><span class="nav-number">5.</span> <span class="nav-text">css权重</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#权重的应用：复杂选择器的计算"><span class="nav-number">5.1.</span> <span class="nav-text">权重的应用：复杂选择器的计算</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#css属性"><span class="nav-number">6.</span> <span class="nav-text">css属性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#伪类选择器"><span class="nav-number">7.</span> <span class="nav-text">伪类选择器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#企业级开发思路"><span class="nav-number">8.</span> <span class="nav-text">企业级开发思路</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#盒子模型"><span class="nav-number">9.</span> <span class="nav-text">盒子模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#层模型"><span class="nav-number">10.</span> <span class="nav-text">层模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#居中布局问题"><span class="nav-number">11.</span> <span class="nav-text">居中布局问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#两栏布局：一个固定宽度，另一个自适应宽度"><span class="nav-number">11.1.</span> <span class="nav-text">两栏布局：一个固定宽度，另一个自适应宽度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#margin两个经典bug"><span class="nav-number">11.2.</span> <span class="nav-text">margin两个经典bug</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#浮动模型"><span class="nav-number">11.3.</span> <span class="nav-text">浮动模型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#文字溢出处理"><span class="nav-number">12.</span> <span class="nav-text">文字溢出处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#背景图片处理"><span class="nav-number">13.</span> <span class="nav-text">背景图片处理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#企业级开发问题"><span class="nav-number">13.1.</span> <span class="nav-text">企业级开发问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#补充"><span class="nav-number">14.</span> <span class="nav-text">补充</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="zoe"
+      src="https://tvax2.sinaimg.cn/crop.0.0.960.960.180/b4866dcfly8fp6p33spu1j20qo0qomz2.jpg?Expires=1564549093&ssig=e3yJPxIPmx&KID=imgbed,tva">
+  <p class="site-author-name" itemprop="name">zoe</p>
+  <div class="site-description" itemprop="description">做自己喜欢的事情，为喜欢的事情而努力</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">26</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/zoe-zc" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;zoe-zc" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zoe</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

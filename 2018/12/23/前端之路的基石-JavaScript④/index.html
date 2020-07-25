@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/ego-blog%20(1).png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/ego-blog.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto Slab:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Js基本语法预编译js的特点：单线程、解释性语言 解释性语言的特点就是翻译一句执行一句，但其实没有这么直观，这是最后一步才执行的。这是js运行三部曲的最后一步 js三部曲 语法分析(语义分析)：通篇执行的过程，判断是否有低级的语法错误，这个过程叫语法分析过程 预编译：在通篇扫描后，没有问题了就开始执行预编译 解释执行：在预编译完成后，在进行解释一行执行一行的操作  预编译的两个现象  预编译前奏">
+<meta property="og:type" content="article">
+<meta property="og:title" content="前端之路的基石-JavaScript④">
+<meta property="og:url" content="http://yoursite.com/2018/12/23/%E5%89%8D%E7%AB%AF%E4%B9%8B%E8%B7%AF%E7%9A%84%E5%9F%BA%E7%9F%B3-JavaScript%E2%91%A3/index.html">
+<meta property="og:site_name" content="Zoe">
+<meta property="og:description" content="Js基本语法预编译js的特点：单线程、解释性语言 解释性语言的特点就是翻译一句执行一句，但其实没有这么直观，这是最后一步才执行的。这是js运行三部曲的最后一步 js三部曲 语法分析(语义分析)：通篇执行的过程，判断是否有低级的语法错误，这个过程叫语法分析过程 预编译：在通篇扫描后，没有问题了就开始执行预编译 解释执行：在预编译完成后，在进行解释一行执行一行的操作  预编译的两个现象  预编译前奏">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/images/20062601/js4/Image.png">
+<meta property="og:image" content="http://yoursite.com/images/20062601/js4/Image%5B1%5D.png">
+<meta property="og:image" content="http://yoursite.com/images/20062601/js4/Image%5B2%5D.png">
+<meta property="og:image" content="http://yoursite.com/images/20062601/js4/Image%5B3%5D.png">
+<meta property="og:image" content="http://yoursite.com/images/20062601/js4/Image%5B4%5D.png">
+<meta property="og:image" content="http://yoursite.com/images/20062601/js4/Image%5B5%5D.png">
+<meta property="article:published_time" content="2018-12-23T03:17:45.000Z">
+<meta property="article:modified_time" content="2020-06-29T12:19:24.620Z">
+<meta property="article:author" content="zoe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/images/20062601/js4/Image.png">
+
+<link rel="canonical" href="http://yoursite.com/2018/12/23/%E5%89%8D%E7%AB%AF%E4%B9%8B%E8%B7%AF%E7%9A%84%E5%9F%BA%E7%9F%B3-JavaScript%E2%91%A3/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>前端之路的基石-JavaScript④ | Zoe</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Zoe</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">zoe's blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/zoe-zc" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/23/%E5%89%8D%E7%AB%AF%E4%B9%8B%E8%B7%AF%E7%9A%84%E5%9F%BA%E7%9F%B3-JavaScript%E2%91%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://tvax2.sinaimg.cn/crop.0.0.960.960.180/b4866dcfly8fp6p33spu1j20qo0qomz2.jpg?Expires=1564549093&ssig=e3yJPxIPmx&KID=imgbed,tva">
+      <meta itemprop="name" content="zoe">
+      <meta itemprop="description" content="做自己喜欢的事情，为喜欢的事情而努力">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zoe">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          前端之路的基石-JavaScript④
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-12-23 11:17:45" itemprop="dateCreated datePublished" datetime="2018-12-23T11:17:45+08:00">2018-12-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-06-29 20:19:24" itemprop="dateModified" datetime="2020-06-29T20:19:24+08:00">2020-06-29</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="Js基本语法"><a href="#Js基本语法" class="headerlink" title="Js基本语法"></a>Js基本语法</h2><h3 id="预编译"><a href="#预编译" class="headerlink" title="预编译"></a>预编译</h3><p>js的特点：单线程、解释性语言</p>
+<p>解释性语言的特点就是翻译一句执行一句，但其实没有这么直观，这是最后一步才执行的。这是js运行三部曲的最后一步</p>
+<h4 id="js三部曲"><a href="#js三部曲" class="headerlink" title="js三部曲"></a>js三部曲</h4><ol>
+<li>语法分析(语义分析)：通篇执行的过程，判断是否有低级的语法错误，这个过程叫语法分析过程</li>
+<li>预编译：在通篇扫描后，没有问题了就开始执行预编译</li>
+<li>解释执行：在预编译完成后，在进行解释一行执行一行的操作</li>
+</ol>
+<h5 id="预编译的两个现象"><a href="#预编译的两个现象" class="headerlink" title="预编译的两个现象"></a>预编译的两个现象</h5><p><img src="/images/20062601/js4/Image.png" alt=""></p>
+<ol>
+<li><p>预编译前奏<br> ① imply global 暗示全局变量：即任何变量，如果变量未经声明就赋值，此变量就为全局对象(window)所有<br> 例如：a未赋值，直接给a赋值 a = 10;相当于 window.a = 10;<br> <img src="/images/20062601/js4/Image%5B1%5D.png" alt=""></p>
+<p> <em>变量d虽然在函数内，但是因为没有声明就直接赋值，所以是window的属性，可以获取</em></p>
+<p> ② 一切声明的全局变量，全是window的属性<br> <strong>window就是全局的域</strong>，window是个对象，相当于仓库一样，变量在声明之后，就放在window中<br> 例如：var a = 10; 相当于 window.a = 10;<br> <img src="/images/20062601/js4/Image%5B2%5D.png" alt=""></p>
+</li>
+<li><p>预编译<br> 预编译发生在函数执行的前一刻</p>
+<p> 函数预编译四部曲：<br> &emsp;1.<strong>创建AO对象</strong>：AO，即 Activation Object 执行期上下文，执行期上下文是由于函数执行而产生的存储空间库。作用：<br> &emsp;2.在函数内<strong>找形参和变量声明，将变量和形参名作为AO属性名，值为undefined</strong>(这一步实际是变量声明的过程)，形参和变量声明的名字重复时只写一个<br> &emsp;3.<strong>将实参值和形参统一</strong>：将实参的值赋值给形参<br> &emsp;4.<strong>在函数体里面找函数声明</strong>，将函数声明的名作为AO对象的属性名挂起，<strong>值赋予函数体</strong></p>
+<blockquote>
+<p>OA对象内重复的变量名只写一个，并且后执行获得的值可以覆盖之前的值<br> 在执行函数时，提升后的变量和函数就不再执行了，这个也叫作变量/函数提升</p>
+</blockquote>
+<p> 实例：<br> <img src="/images/20062601/js4/Image%5B3%5D.png" alt=""><br> 在函数执行之前，先执行预编译的过程：<br> 第一步：创建AO对象</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AO &#123;&#125;</span><br></pre></td></tr></table></figure>
+<p> 第二步：找到形参和变量声明，并将他们的名字作为AO对象的属性，值为undefined</p>
+<pre><code>在函数中找到形参a和变量声明a、b，虽然有两个a，但只需要写一个即可。
+b虽然是函数，但是是用变量来接收的，所以也算在内。</code></pre> <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">AO &#123;</span><br><span class="line">    a: <span class="literal">undefined</span>,</span><br><span class="line">    b: <span class="literal">undefined</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 第三步：形参和实参值统一</p>
+<pre><code>实参值为1，赋值给形参，也就是AO对象中的a，此时a为1</code></pre> <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">AO &#123;</span><br><span class="line">    a: <span class="number">1</span>,</span><br><span class="line">    b: <span class="literal">undefined</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 第四步：找出函数声明，值为函数体</p>
+<pre><code>找到函数声明a和d，且值为函数体，所以AO对象中的a的值变为了函数a的函数体。
+且接收了一个属性d，值是函数d的函数体</code></pre> <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">AO &#123;</span><br><span class="line">    a: <span class="function"><span class="keyword">function</span> <span class="title">a</span>(<span class="params"></span>) </span>&#123;&#125;,</span><br><span class="line">    b: <span class="literal">undefined</span>,</span><br><span class="line">    d: <span class="function"><span class="keyword">function</span> <span class="title">d</span>(<span class="params"></span>) </span>&#123;&#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 在预编译完成后，会开始执行函数，方式是解释一行执行一行。<br> 执行第一行的<code>console.log(a);</code>，变量<code>a</code>是保存在<code>AO</code>对象中的值，所以<code>a</code>的值是函数<code>a</code>。<br> 执行第二行时，由于在预编译时已经将变量提升，所以只执行<code>a = 123</code>;<br> 执行第三行的<code>console.log(a);</code>，变量<code>a</code>刚被赋值<code>123</code>，所以打印结果是123<br> 执行第四行时，由于在预编译时已经将函数提升，所以这行忽略不看<br> 执行第五行的<code>console.log(a);</code>，变量<code>a</code>没有改变，所以打印结果依然是123<br> 执行第六行时，由于在预编译时已经将变量提升，所以只执行<code>b = function() {}</code>。并向<code>AO</code>对象的<code>b</code>赋值为函数<code>b</code>.<br> 执行第七行的<code>console.log(b);</code>，变量<code>b</code>是保存在<code>AO</code>对象中的值，所以打印<code>b</code>的值是函数<code>b</code>。<br> AO最后的结果：</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">AO &#123;</span><br><span class="line">    a: <span class="number">123</span>,</span><br><span class="line">    b: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;&#125;,</span><br><span class="line">    d: <span class="function"><span class="keyword">function</span> <span class="title">d</span>(<span class="params"></span>) </span>&#123;&#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> 预编译不止发生在函数里，还发生在全局的环境中，产生的对象叫做<strong>全局执行期上下文</strong>。<br> 在全局里没有传参需求，所以预编译步骤只有三步：<br> &emsp;1.生成GO对象，Global Object全局对象<br> &emsp;2.获取变量声明作为GO对象的属性，值为undefined<br> &emsp;3.找到函数声明，值为函数体</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = <span class="number">123</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">a</span>(<span class="params"></span>) </span>&#123;&#125;</span><br><span class="line"><span class="built_in">console</span>.log(a);<span class="comment">// 123</span></span><br><span class="line"></span><br><span class="line">GO &#123;</span><br><span class="line">    a: <span class="literal">undefined</span> --&gt; 函数a --&gt; <span class="number">123</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 事实上，在打印a时要在GO对象中获取值，跟从window中获取值是一样的，所以，<strong>GO就是window对象(GO===window)</strong><br> 任何全局变量都是window上的属性，或者说全局变量都是GO对象的属性。<br> 未经声明就赋值的变量是全局变量归window所有，同理，这种变量是放在GO对象里进行编译的。<br> <img src="/images/20062601/js4/Image%5B4%5D.png" alt=""></p>
+<blockquote>
+<p>问：先生成GO还是AO?<br> 答：GO，先看全局变量，带全局函数执行的前一刻，生成AO</p>
+</blockquote>
+<p> 函数内部有需要用的变量时，用函数内部的，没有的再向外部查找<br> <strong>AO和GO有一个链式关系，访问顺序：就近原则</strong><br> <img src="/images/20062601/js4/Image%5B5%5D.png" alt=""></p>
+<p> <strong>在预编译时，无论GO还是AO都不受其他条件(if判断)的影响</strong></p>
+</li>
+</ol>
+<blockquote>
+<p>学习jQuery的好处：公司的老项目会用到(老版本)，学习jQuery的变成思维</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/12/23/%E5%89%8D%E7%AB%AF%E4%B9%8B%E8%B7%AF%E7%9A%84%E5%9F%BA%E7%9F%B3-JavaScript%E2%91%A2/" rel="prev" title="前端之路的基石-JavaScript③">
+      <i class="fa fa-chevron-left"></i> 前端之路的基石-JavaScript③
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/12/23/%E5%89%8D%E7%AB%AF%E4%B9%8B%E8%B7%AF%E7%9A%84%E5%9F%BA%E7%9F%B3-JavaScript%E2%91%A4/" rel="next" title="前端之路的基石-JavaScript⑤">
+      前端之路的基石-JavaScript⑤ <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Js基本语法"><span class="nav-number">1.</span> <span class="nav-text">Js基本语法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#预编译"><span class="nav-number">1.1.</span> <span class="nav-text">预编译</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#js三部曲"><span class="nav-number">1.1.1.</span> <span class="nav-text">js三部曲</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#预编译的两个现象"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">预编译的两个现象</span></a></li></ol></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="zoe"
+      src="https://tvax2.sinaimg.cn/crop.0.0.960.960.180/b4866dcfly8fp6p33spu1j20qo0qomz2.jpg?Expires=1564549093&ssig=e3yJPxIPmx&KID=imgbed,tva">
+  <p class="site-author-name" itemprop="name">zoe</p>
+  <div class="site-description" itemprop="description">做自己喜欢的事情，为喜欢的事情而努力</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">26</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/zoe-zc" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;zoe-zc" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zoe</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
