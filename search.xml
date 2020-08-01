@@ -1,320 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>ElementUI Upload组件上传图片</title>
-    <url>/2019/08/07/ElementUI-Upload%E7%BB%84%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%9B%BE%E7%89%87/</url>
-    <content><![CDATA[<p>ElementUI组件使用真的很方便，不过因为是封装好的组件所以在项目中使用的局限性也比较大，官方提供的<a href="https://element.eleme.io/#/zh-CN/component/upload" target="_blank" rel="noopener">api</a>用起来就有些不足。</p>
-<h4 id="开发背景"><a href="#开发背景" class="headerlink" title="开发背景"></a>开发背景</h4><p>需要把图片上传至文件系统服务器，再将返回的储存路径，通过axios请求发给后端。在以前的项目中是直接对input[type=”file”]做处理，使用的是<strong>formData</strong>作为参数传值。官方api上并没有提供非表单上传文件的方法，结合别人的思路和自己的思考，本篇文章对此做个总结。</p>
-<h4 id="参数说明"><a href="#参数说明" class="headerlink" title="参数说明"></a>参数说明</h4><ol>
-<li>action: 为必填项，如果使用axios发送请求，可以为空</li>
-<li>ref: 获取上传文件的内容，实际项目中没用到。取值: this.$refs.uploadImage.fileList，该值与函数返回的file内的值相同</li>
-<li>multiple: 同时选择多个文件</li>
-<li>list-type: 文件列表的类型(text/picture/picture-card)</li>
-<li>accept: 限制上传文件类型</li>
-<li>limit: 限制上传文件数量</li>
-<li>auto-upload: 自动上传(默认为true)，如果使用axios发送请求，设置为false</li>
-<li>file-list: 上传的文件列表</li>
-<li>on-exceed: 图片数量超出限定大小时调用</li>
-<li>on-change: 添加、上传成功或失败时调用</li>
-<li>on-remove: 移除图片时调用</li>
-</ol>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;el-upload</span><br><span class="line">    action=<span class="string">""</span></span><br><span class="line">    ref=<span class="string">"uploadImage"</span></span><br><span class="line">    multiple</span><br><span class="line">    list-type=<span class="string">"picture-card"</span></span><br><span class="line">    accept=<span class="string">".jpg,.jpeg,.png,.pdf,.JPG,.JPEG,.PDF"</span></span><br><span class="line">    :limit=<span class="string">"20"</span></span><br><span class="line">    :auto-upload=<span class="string">"false"</span></span><br><span class="line">    :file-list=<span class="string">"imagesList"</span></span><br><span class="line">    :on-exceed=<span class="string">"handleExceed"</span></span><br><span class="line">    :on-change=<span class="string">"handleChange"</span></span><br><span class="line">    :on-remove=<span class="string">"handleRemove"</span></span><br><span class="line">  &gt;</span><br><span class="line">    &lt;i slot=<span class="string">"default"</span> <span class="class"><span class="keyword">class</span></span>=<span class="string">"el-icon-plus"</span>&gt;&lt;<span class="regexp">/i&gt;</span></span><br><span class="line"><span class="regexp">    &lt;div slot="file" slot-scope="&#123;file&#125;"&gt;</span></span><br><span class="line"><span class="regexp">      &lt;img</span></span><br><span class="line"><span class="regexp">        class="el-upload-list__item-thumbnail"</span></span><br><span class="line"><span class="regexp">        :src="file.url" alt=""</span></span><br><span class="line"><span class="regexp">      &gt;</span></span><br><span class="line"><span class="regexp">      &lt;span class="el-upload-list__item-actions"&gt;</span></span><br><span class="line"><span class="regexp">        &lt;span</span></span><br><span class="line"><span class="regexp">          class="el-upload-list__item-delete"</span></span><br><span class="line"><span class="regexp">        &gt;</span></span><br><span class="line"><span class="regexp">          &lt;i class="el-icon-delete"&gt;&lt;/i</span>&gt;</span><br><span class="line">        &lt;<span class="regexp">/span&gt;</span></span><br><span class="line"><span class="regexp">      &lt;/</span>span&gt;</span><br><span class="line">    &lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">    &lt;div slot="tip" class="el-upload__tip"&gt;支持JPG/</span>JPEG/PNG/PDF格式，大小在<span class="number">10</span>MB内，最大上传数<span class="number">20</span>个&lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">  &lt;/</span>el-upload&gt;</span><br><span class="line">&lt;<span class="regexp">/template&gt;</span></span><br><span class="line"><span class="regexp">&lt;script&gt;</span></span><br><span class="line"><span class="regexp">  export default &#123;</span></span><br><span class="line"><span class="regexp">    data() &#123;</span></span><br><span class="line"><span class="regexp">      imagesList: [],</span></span><br><span class="line"><span class="regexp">      imagesSelectList: [],</span></span><br><span class="line"><span class="regexp">    &#125;,</span></span><br><span class="line"><span class="regexp">    methods: &#123;</span></span><br><span class="line"><span class="regexp">      /</span><span class="regexp">/ 上传图片超出限定值</span></span><br><span class="line"><span class="regexp">      handleExceed(file, fileList) &#123;</span></span><br><span class="line"><span class="regexp">        this.$message.warning('所选图片数量超出最大值');</span></span><br><span class="line"><span class="regexp">      &#125;,</span></span><br><span class="line"><span class="regexp">      handleChange(file, fileList) &#123;</span></span><br><span class="line"><span class="regexp">        /</span><span class="regexp">/ 文件后缀做判断</span></span><br><span class="line"><span class="regexp">        let nameArr = file.name.split('.');</span></span><br><span class="line"><span class="regexp">        let fileType = nameArr[nameArr.length - 1];</span></span><br><span class="line"><span class="regexp">        if (fileType == 'pdf') &#123;</span></span><br><span class="line"><span class="regexp">          fileType = 'text';</span></span><br><span class="line"><span class="regexp">        &#125;else &#123;</span></span><br><span class="line"><span class="regexp">          fileType = 'img';</span></span><br><span class="line"><span class="regexp">        &#125;</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">        /</span><span class="regexp">/ 上传图片至文件服务器，再获取返回的储存路径</span></span><br><span class="line"><span class="regexp">        let formData = new FormData();</span></span><br><span class="line"><span class="regexp">        formData.append('type', fileType);</span></span><br><span class="line"><span class="regexp">        formData.append('file', file.raw)</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">        this.$axios.post(</span></span><br><span class="line"><span class="regexp">          '/</span>fileUpload<span class="string">',</span></span><br><span class="line"><span class="string">          formData,</span></span><br><span class="line"><span class="string">          res =&gt; &#123;</span></span><br><span class="line"><span class="string">            if (res.code == 0) &#123;</span></span><br><span class="line"><span class="string">              this.imagesSelectList.push(&#123;</span></span><br><span class="line"><span class="string">                name: file.name,</span></span><br><span class="line"><span class="string">                url: res.data.file_url</span></span><br><span class="line"><span class="string">              &#125;);</span></span><br><span class="line"><span class="string">            &#125;else &#123;</span></span><br><span class="line"><span class="string">              this.$message.warning(res.message);</span></span><br><span class="line"><span class="string">            &#125;</span></span><br><span class="line"><span class="string">          &#125;</span></span><br><span class="line"><span class="string">        )</span></span><br><span class="line"><span class="string">      &#125;,</span></span><br><span class="line"><span class="string">      // 移除文件</span></span><br><span class="line"><span class="string">      handleRemove(file, fileList) &#123;</span></span><br><span class="line"><span class="string">        let index = this.imagesSelectList.findIndex((item) =&gt; &#123;</span></span><br><span class="line"><span class="string">          return item.name == file.name;</span></span><br><span class="line"><span class="string">        &#125;)</span></span><br><span class="line"><span class="string">        if (index !== -1) &#123;</span></span><br><span class="line"><span class="string">          this.imagesSelectList.splice(index, 1);</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">      &#125;,</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&lt;/script&gt;</span></span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>methods</category>
-      </categories>
-      <tags>
-        <tag>vue</tag>
-        <tag>ElementUI</tag>
-        <tag>el-upload</tag>
-        <tag>upload</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>input限制输入字符的方法</title>
-    <url>/2019/07/30/v-model%E9%99%90%E5%88%B6%E8%BE%93%E5%85%A5%E6%AD%A3%E6%95%B4%E6%95%B0/</url>
-    <content><![CDATA[<h2 id="限制只能输入数字"><a href="#限制只能输入数字" class="headerlink" title="限制只能输入数字"></a>限制只能输入数字</h2><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">onkeyup</span>=<span class="string">'this.value=this.value.replace(/\D/gi,"")'</span>/&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>&nbsp;</p>
-<h2 id="input限制保留两位小数，且只能输入数字及一个小数点符号"><a href="#input限制保留两位小数，且只能输入数字及一个小数点符号" class="headerlink" title="input限制保留两位小数，且只能输入数字及一个小数点符号"></a>input限制保留两位小数，且只能输入数字及一个小数点符号</h2><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">clearNoNum</span>(<span class="params">obj</span>)</span>&#123;</span><br><span class="line">  <span class="keyword">let</span> obj = e.target;</span><br><span class="line">  obj.value = obj.value.replace(<span class="regexp">/[^\d.]/g</span>,<span class="string">""</span>); <span class="comment">//清除"数字"和"."以外的字符</span></span><br><span class="line">  obj.value = obj.value.replace(<span class="regexp">/^\./g</span>,<span class="string">""</span>); <span class="comment">//验证第一个字符是数字</span></span><br><span class="line">  obj.value = obj.value.replace(<span class="regexp">/\.&#123;2,&#125;/g</span>,<span class="string">"."</span>); <span class="comment">//只保留第一个, 清除多余的</span></span><br><span class="line">  obj.value = obj.value.replace(<span class="string">"."</span>,<span class="string">"$#$"</span>).replace(<span class="regexp">/\./g</span>,<span class="string">""</span>).replace(<span class="string">"$#$"</span>,<span class="string">"."</span>);</span><br><span class="line">  obj.value = obj.value.replace(<span class="regexp">/^(\-)*(\d+)\.(\d\d).*$/</span>,<span class="string">'$1$2.$3'</span>); <span class="comment">//只能输入两个小数</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">//以上已经过滤，此处控制的是如果没有小数点，首位不能为类似于 01、02的金额</span></span><br><span class="line">  <span class="keyword">if</span>(obj.value.indexOf(<span class="string">"."</span>) &lt; <span class="number">0</span> &amp;&amp; obj.value !=<span class="string">""</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span>(obj.value.substr(<span class="number">0</span>,<span class="number">1</span>) == <span class="string">'0'</span> &amp;&amp; obj.value.length == <span class="number">2</span>)&#123;</span><br><span class="line">        obj.value= <span class="built_in">parseFloat</span>(obj.value);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>在Input中调用：</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">name</span>=<span class="string">"je"</span> <span class="attr">onkeyup</span>=<span class="string">"clearNoNum(this)"</span> /&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>&nbsp;</p>
-<h2 id="input限制输入正整数"><a href="#input限制输入正整数" class="headerlink" title="input限制输入正整数"></a>input限制输入正整数</h2><p>原型需求：项目中的Input要求只能输入正整数</p>
-<h4 id="给input绑定keyup事件"><a href="#给input绑定keyup事件" class="headerlink" title="给input绑定keyup事件"></a>给input绑定keyup事件</h4><p>该方式直接在标签内绑定事件，仅适用于input数量较少时使用。</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">v-model</span>=<span class="string">"value"</span> @<span class="attr">keyup</span>=<span class="string">"value = value.length === 1 ? value.replace(/[^1-9]/g, '') : value.replace(/\D/g, '')"</span> /&gt;</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="使用vue自定义指令"><a href="#使用vue自定义指令" class="headerlink" title="使用vue自定义指令"></a>使用vue自定义指令</h4><ol>
-<li>新建js文件 parseInt.js<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> Vue <span class="keyword">from</span> <span class="string">'vue'</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> () =&gt; &#123;</span><br><span class="line">  <span class="comment">// 针对 el-input做的限制，只能输入正整数</span></span><br><span class="line">  Vue.directive(<span class="string">'Int'</span>, &#123;</span><br><span class="line">    bind: <span class="function"><span class="keyword">function</span> (<span class="params">el</span>) </span>&#123;</span><br><span class="line">      <span class="keyword">const</span> input = el</span><br><span class="line">      input.onkeyup = <span class="function"><span class="keyword">function</span> (<span class="params">e</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (input.value.length === <span class="number">1</span>) &#123;</span><br><span class="line">          input.value = input.value.replace(<span class="regexp">/[^1-9]/g</span>, <span class="string">''</span>)</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">          input.value = input.value.replace(<span class="regexp">/[^\d]/g</span>, <span class="string">''</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        trigger(input, <span class="string">'input'</span>)</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      input.onblur = <span class="function"><span class="keyword">function</span> (<span class="params">e</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (input.value.length === <span class="number">1</span>) &#123;</span><br><span class="line">          input.value = input.value.replace(<span class="regexp">/[^1-9]/g</span>, <span class="string">''</span>)</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">          input.value = input.value.replace(<span class="regexp">/[^\d]/g</span>, <span class="string">''</span>)</span><br><span class="line"></span><br><span class="line">          <span class="comment">// 去掉所有从第一位开始的数字0</span></span><br><span class="line">          input.value = input.value.replace(<span class="regexp">/\b(0+)/gi</span>, <span class="string">''</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        trigger(input, <span class="string">'input'</span>)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*********************************</span></span><br><span class="line"><span class="comment">  ** Fn: trigger</span></span><br><span class="line"><span class="comment">  ** Intro: 参考 https://github.com/vuejs/Discussion/issues/157#issuecomment-273301588</span></span><br><span class="line"><span class="comment">  ** Author: zyx</span></span><br><span class="line"><span class="comment">*********************************/</span></span><br><span class="line"><span class="keyword">const</span> trigger = <span class="function">(<span class="params">el, type</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> e = <span class="built_in">document</span>.createEvent(<span class="string">'HTMLEvents'</span>)</span><br><span class="line">  e.initEvent(type, <span class="literal">true</span>, <span class="literal">true</span>)</span><br><span class="line">  el.dispatchEvent(e)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li>在main.js中注册自定义指令<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> Directives <span class="keyword">from</span> <span class="string">'./assets/js/parseInt.js'</span></span><br><span class="line">Vue.use(Directives)</span><br><span class="line"><span class="string">``</span><span class="string">` </span></span><br><span class="line"><span class="string">3. 在vue文件内应用</span></span><br><span class="line"><span class="string">`</span><span class="string">``</span>html</span><br><span class="line">&lt;input v-<span class="keyword">else</span> v-model.trim=<span class="string">"item.num"</span> type=<span class="string">"number"</span> max=<span class="string">"40"</span> v-Int/&gt;</span><br></pre></td></tr></table></figure>
-
-</li>
-</ol>
-<p>该问题解决方案参考<a href="https://juejin.im/post/5bc5c48f6fb9a05d09658093" target="_blank" rel="noopener">该文章</a>，并在作者的方法上做了相应需求的修改。</p>
-<p>原方法判断只有一位数字时会限制输入数字0，但是无法限制长按0键时的一串数字(该Bug来源于我们公司优秀的测试)。</p>
-]]></content>
-      <categories>
-        <category>debug</category>
-      </categories>
-      <tags>
-        <tag>vue</tag>
-        <tag>input</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>浏览器本地储存方法</title>
-    <url>/2019/07/30/%E6%B5%8F%E8%A7%88%E5%99%A8%E6%9C%AC%E5%9C%B0%E5%82%A8%E5%AD%98%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<h2 id="cookie"><a href="#cookie" class="headerlink" title="cookie"></a>cookie</h2><p>在vue中获取本地cookie值的封装方法：</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 获取指定名称(name)的cookie值</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getCookie</span>(<span class="params">name</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> arr = <span class="built_in">document</span>.cookie.match(<span class="keyword">new</span> <span class="built_in">RegExp</span>(<span class="string">"(^| )"</span>+name+<span class="string">"=([^;]*)(;|$)"</span>));</span><br><span class="line">  <span class="keyword">if</span>(arr != <span class="literal">null</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">unescape</span>(arr[<span class="number">2</span>]);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>说明：(^| )name=([^;]*)(;|$),match[0]为与整个正则表达式匹配的字符串，match[i]为正则表达式捕获数组相匹配的数组</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> cookieData = getCookie(<span class="string">'token'</span>);</span><br></pre></td></tr></table></figure>
-<p>cookieData为获取名为’token’的cookie值</p>
-]]></content>
-      <categories>
-        <category>debug</category>
-      </categories>
-      <tags>
-        <tag>vue</tag>
-        <tag>js</tag>
-        <tag>cookie</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>表单校验正则的方法</title>
-    <url>/2019/08/07/%E8%A1%A8%E5%8D%95%E6%A0%A1%E9%AA%8C%E6%AD%A3%E5%88%99%E7%9A%84%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>做项目时，肯定会有表单验证这样的需求，但是每次多少都不太一样，本篇文章用于记录开发中我所用过的且可用的验证方法。本项目中使用ElementUI框架，ElementUI是基于Vue.js开发的UI框架，有封装好的各种组件可直接使用，并且可以自己配置主题颜色，适用于需要高效快捷完成开发工作的同学。</p>
-<h2 id="校验规则"><a href="#校验规则" class="headerlink" title="校验规则"></a>校验规则</h2><ol>
-<li><p>用户名/姓名<br>不限制输入字符，长度为10位<br>可使用input的属性：maxlength</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">el-input</span></span></span><br><span class="line"><span class="tag">  <span class="attr">placeholder</span>=<span class="string">"1-10个字符，允许中英文、数字或符号"</span></span></span><br><span class="line"><span class="tag">  <span class="attr">maxlength</span>=<span class="string">"10"</span></span></span><br><span class="line"><span class="tag">  <span class="attr">clearable</span></span></span><br><span class="line"><span class="tag">  <span class="attr">v-model</span>=<span class="string">"params.name"</span></span></span><br><span class="line"><span class="tag">  @<span class="attr">blur</span>=<span class="string">"validateForm('name')"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">el-input</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"error"</span>&gt;</span>&#123;&#123; nameError &#125;&#125;<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>手机号<br>限制输入字符仅为数字且长度为11位<br>绑定input事件，最好使用oninput，@input方法不生效。在输入时判断当前输入字符是否为数字，除数字外的字符都被替换为空，并且对超出长度的字符截取。</p>
-</li>
-</ol>
-<p><strong>注：绑定事件后，maxlength不生效。</strong></p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">el-input</span></span></span><br><span class="line"><span class="tag">  <span class="attr">type</span>=<span class="string">"number"</span></span></span><br><span class="line"><span class="tag">  <span class="attr">oninput</span>=<span class="string">"value=value.replace(/[^\d]/g,'').slice(0,11)"</span></span></span><br><span class="line"><span class="tag">  <span class="attr">placeholder</span>=<span class="string">"请输入手机号"</span></span></span><br><span class="line"><span class="tag">  <span class="attr">v-model</span>=<span class="string">"params.phone"</span></span></span><br><span class="line"><span class="tag">  <span class="attr">clearable</span></span></span><br><span class="line"><span class="tag">  @<span class="attr">blur</span>=<span class="string">"validateForm('phone')"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">el-input</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"error"</span>&gt;</span>&#123;&#123; phoneError &#125;&#125;<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="逻辑代码"><a href="#逻辑代码" class="headerlink" title="逻辑代码"></a>逻辑代码</h2><p><strong>validateForm</strong>方法在input失去焦点时调用，即可进行数值的校验。为防止失焦校验不准确，在最后提交时，再校验一遍，也可以校验其他不需要失焦校验的情况。</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">&lt;script&gt;</span><br><span class="line">  <span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">    data() &#123;</span><br><span class="line">      params: &#123;</span><br><span class="line">        name: <span class="string">''</span>,</span><br><span class="line">        phone: <span class="string">''</span></span><br><span class="line">      &#125;,</span><br><span class="line">      verified: <span class="literal">true</span>,</span><br><span class="line">      nameError: <span class="string">''</span>,</span><br><span class="line">      phoneError: <span class="string">''</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">    methods: &#123;</span><br><span class="line">      <span class="comment">// 表单校验</span></span><br><span class="line">      validateForm(field) &#123;</span><br><span class="line">        <span class="comment">// 校验规则</span></span><br><span class="line">        <span class="keyword">let</span> reg = &#123;</span><br><span class="line">          phoneReg: <span class="regexp">/^([1][3-9]&#123;1&#125;)\d&#123;9&#125;$/</span>,</span><br><span class="line">          idNumberReg: <span class="regexp">/^\d&#123;18&#125;|\d&#123;17&#125;[X]$/g</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 非空字段，用于显示提示语</span></span><br><span class="line">        <span class="keyword">let</span> msgList = [</span><br><span class="line">          &#123;</span><br><span class="line">            prop: <span class="string">'name'</span>,</span><br><span class="line">            label:<span class="string">'姓名'</span></span><br><span class="line">          &#125;,&#123;</span><br><span class="line">            prop: <span class="string">'phone'</span>,</span><br><span class="line">            label:<span class="string">'手机号'</span></span><br><span class="line">          &#125;</span><br><span class="line">        ]</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (field !== <span class="literal">undefined</span>) &#123;</span><br><span class="line">          <span class="comment">// field不为undefined时，当前为失焦判断</span></span><br><span class="line">          <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; msgList.length; i++) &#123;</span><br><span class="line">            <span class="keyword">let</span> item = msgList[i];</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 循环匹配与当前field相等的字段</span></span><br><span class="line">            <span class="keyword">if</span> (item.prop == field) &#123;</span><br><span class="line">              <span class="keyword">if</span>(<span class="keyword">this</span>.params[field] == <span class="string">''</span>) &#123;</span><br><span class="line">                <span class="comment">// 校验不能为空，并提示</span></span><br><span class="line">                <span class="keyword">this</span>[field + <span class="string">'Error'</span>] = item.label + <span class="string">'不能为空'</span>;</span><br><span class="line">                <span class="keyword">this</span>.verified = <span class="literal">false</span>;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">              &#125;<span class="keyword">else</span> <span class="keyword">if</span> (field !== <span class="string">'name'</span> &amp;&amp; <span class="keyword">this</span>.params[field].match(reg[field+<span class="string">'Reg'</span>]) == <span class="literal">null</span>) &#123;</span><br><span class="line">                <span class="comment">// 输入字符后进行校验，并提示</span></span><br><span class="line">                <span class="keyword">this</span>[field + <span class="string">'Error'</span>] = item.label + <span class="string">'格式错误'</span>;</span><br><span class="line">                <span class="keyword">this</span>.verified = <span class="literal">false</span>;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">              &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">// 不为空且校验正确，清空提示语</span></span><br><span class="line">                <span class="keyword">this</span>[field + <span class="string">'Error'</span>] = <span class="string">''</span>;</span><br><span class="line">                <span class="keyword">this</span>.verified = <span class="literal">true</span>;</span><br><span class="line">              &#125;</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">          <span class="comment">// 未传参field时，为最后提交时的校验</span></span><br><span class="line">          <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; msgList.length; i++) &#123;</span><br><span class="line">            <span class="keyword">let</span> item = msgList[i];</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 循环匹配所有字段</span></span><br><span class="line">            <span class="keyword">if</span>(<span class="keyword">this</span>.params[item.prop] == <span class="string">''</span>) &#123;</span><br><span class="line">              <span class="comment">// 校验不能为空，并提示</span></span><br><span class="line">              <span class="keyword">this</span>[item.prop + <span class="string">'Error'</span>] = item.label + <span class="string">'不能为空'</span>;</span><br><span class="line">              <span class="keyword">this</span>.verified = <span class="literal">false</span>;</span><br><span class="line">              <span class="keyword">break</span>;</span><br><span class="line">            &#125;<span class="keyword">else</span> <span class="keyword">if</span> (item.prop !== <span class="string">'name'</span> &amp;&amp; <span class="keyword">this</span>.params[item.prop].match(reg[item.prop+<span class="string">'Reg'</span>]) == <span class="literal">null</span>) &#123;</span><br><span class="line">              <span class="comment">// 输入字符后进行校验，并提示</span></span><br><span class="line">              <span class="keyword">this</span>[item.prop + <span class="string">'Error'</span>] = item.label + <span class="string">'格式错误'</span>;</span><br><span class="line">              <span class="keyword">this</span>.verified = <span class="literal">false</span>;</span><br><span class="line">              <span class="keyword">break</span>;</span><br><span class="line">            &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">              <span class="keyword">this</span>[item.prop + <span class="string">'Error'</span>] = <span class="string">''</span>;</span><br><span class="line">              <span class="keyword">this</span>.verified = <span class="literal">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="comment">// 提交表单</span></span><br><span class="line">      submit() &#123;</span><br><span class="line">        <span class="comment">// 调用validateForm方法且不传参，进行校验</span></span><br><span class="line">        <span class="keyword">this</span>.validateForm();</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">this</span>.verified) &#123;</span><br><span class="line">          <span class="comment">// 表单校验正确，提交</span></span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&lt;<span class="regexp">/script&gt;</span></span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>methods</category>
-      </categories>
-      <tags>
-        <tag>vue</tag>
-        <tag>ElementUI</tag>
-        <tag>input</tag>
-        <tag>el-input</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>GitHub + Hexo搭建博客</title>
-    <url>/2018/07/30/GitHub%20+%20Hexo%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/</url>
-    <content><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>做前端开发有几年了，之前一直都是在印象笔记上做记录，可以搜索觉得也挺方便的。</p>
-<p>最近突然觉得这样记录下来的内容太碎片化，都是一些常用的方法和解决Bug的方法，并没有对一个问题进行过深入分析和探讨，所以觉得对很多地方的理解比较片面化而且记忆也不牢固。</p>
-<p>由此，打算做一个简单的个人博客，用于对平时工作中遇到的问题做总结记录、发表个人己见的日志。</p>
-<h2 id="了解GitHub-Pages"><a href="#了解GitHub-Pages" class="headerlink" title="了解GitHub Pages"></a>了解GitHub Pages</h2><p>博客的内容属于展示性的静态页面，不需要与后端进行数据交互。之前使用过GitHub Pages功能，GitHub可以托管项目代码，想要查看页面只需要把代码打包好上传并在相应的域名访问即可</p>
-<h2 id="搭建过程-windows环境"><a href="#搭建过程-windows环境" class="headerlink" title="搭建过程(windows环境)"></a>搭建过程(windows环境)</h2><p>搭建过程主要是参考了jeyzhang的<a href="http://www.jeyzhang.com/hexo-github-blog-building.html" target="_blank" rel="noopener">文章</a>，作者大大写的非常详细，只要一步一步的跟着做都会成功的。当然还有专业的文档也可以参考<a href="https://hexo.io/zh-cn/docs/" target="_blank" rel="noopener">官方文档</a></p>
-<p><strong>如果换电脑了，或者环境丢失时，可同样按照下面的搭建步骤操作</strong></p>
-<ol>
-<li><p>安装依赖<br>-<a href="http://nodejs.org/" target="_blank" rel="noopener">node.js</a><br>-<a href="https://git-scm.com/download/win" target="_blank" rel="noopener">Git</a></p>
-</li>
-<li><p>依赖安装完成后，安装<strong>Hexo</strong>，打开Git Bash(或cmd)执行命令行</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ npm install -g hexo-cli</span><br></pre></td></tr></table></figure>
-<p> <img src="/images/Hexo/1.jpg" alt=""></p>
-</li>
-<li><p>安装成功后，选择一个放项目的文件夹，初始化项目<br>我的项目存在F盘，当前路径是F:/github-blog</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo init blog</span><br><span class="line">$ <span class="built_in">cd</span> blog/</span><br><span class="line">$ npm install</span><br></pre></td></tr></table></figure>
-<p> <img src="/images/Hexo/2.jpg" alt=""></p>
-</li>
-<li><p>启动本地服务</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo s</span><br></pre></td></tr></table></figure>
-<p> 启动成功后，展示如下：<br> <img src="/images/Hexo/3.jpg" alt=""></p>
-<p> 现在就可以在<a href="http://localhost:4000" target="_blank" rel="noopener">本地 http://localhost:4000</a>查看Hexo默认主题效果啦。</p>
-</li>
-</ol>
-<h2 id="线上访问"><a href="#线上访问" class="headerlink" title="线上访问"></a>线上访问</h2><p>本地服务启动成功后，就可以在本地进行博客的新建、编辑了。不过在这之前，先将本地博客与Github进行关联，来托管项目并查看线上效果。</p>
-<ol>
-<li><p>在<a href="https://github.com/" target="_blank" rel="noopener">Github官网</a>注册账号，并创建项目</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">点击页面右上角的+图标，选择New repository。</span><br><span class="line"></span><br><span class="line">在Repository name中填写你的Github账号名.github.io，如：zoe-zc.github.io。</span><br><span class="line"></span><br><span class="line">Description中填写对此repository的描述信息(可选，但建议填写，如Personal website)。</span><br><span class="line"></span><br><span class="line">点击Create repository，完成创建。</span><br></pre></td></tr></table></figure>
-<p> <img src="/images/Hexo/4.jpg" alt=""></p>
-</li>
-<li><p>创建好项目后，需要绑定Github的SSH Keys</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> ~/.ssh</span><br></pre></td></tr></table></figure>
-<p> 先进入.ssh目录，或者直接在文件管理器中打开，一般路径是：C:\Users\89513<br> <img src="/images/Hexo/11.jpg" alt=""></p>
-<p> 若没有.ssh目录，则生成新的SSH Keys：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ ssh-keygen -t rsa -C <span class="string">"your e-mail(注册Github的邮箱)"</span></span><br></pre></td></tr></table></figure>
-<p> <em>注意：这里的邮箱是注册Github的邮箱，不清楚邮箱的可以在下图位置查询</em><br> <img src="/images/Hexo/12.jpg" alt=""></p>
-</li>
-<li><p>SSH Key生成成功后，复制<code>~/.ssh/id_rsa.pub</code>文件的内容(包括最后的邮箱)</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ cat ~/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
-<p> cat+文件名：打印文件的内容</p>
-</li>
-<li><p>在Github添加SSH Key</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">打开Github官网，登陆后进入到个人设置(点击头像-&gt;setting)，点击右侧的SSH Keys，点击Add SSH key；填写title之后，将之前复制的内容粘贴到Key框中，最后点击Add key即可。</span><br></pre></td></tr></table></figure>
-<p> <img src="/images/Hexo/5.jpg" alt=""></p>
-</li>
-<li><p>检测SSH是否配置成功</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ ssh -T git@github.com</span><br></pre></td></tr></table></figure>
-<p> 若配置成功，则显示：<br> <img src="/images/Hexo/7.png" alt=""></p>
-<p> 如果之前设置过SSH keys，但在本地执行检测语句失败时，可以重新复制<code>~/.ssh/id_rsa.pub</code>文件的内容，并在Github上删除原来的SSH keys，添加新的SSH keys。<br> <img src="/images/Hexo/6.jpg" alt=""></p>
-</li>
-<li><p>绑定GitHub，将博客发布到Github的同名repository中</p>
-<p> 打开<strong>F:/github-blog/blog</strong>文件夹下的_config.yml文件，拖动滚动条至文件最末端，找到图中的位置并修改：<br> <img src="/images/Hexo/8.jpg" alt=""></p>
-<p> 改为：</p>
- <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">deploy:</span><br><span class="line">type: git</span><br><span class="line">repo: git@github.com:zoe-zc&#x2F;zoe-zc.github.io</span><br></pre></td></tr></table></figure>
-<p> <strong>注</strong>： (1) zoe-zc替换成你的Github账户名; (2) 注意在yml文件中，符号“:”后面都是要带空格的。</p>
-</li>
-</ol>
-<p>现在可以通过访问线上域名<a href="https://zoe-zc.github.io/" target="_blank" rel="noopener">https://zoe-zc.github.io/</a>来查看自己的博客了。</p>
-<p>至此，本地博客搭建并与GitHub绑定都完成了，默认的主题不太喜欢，决定换成Next主题。</p>
-<h2 id="设置Hexo的主题"><a href="#设置Hexo的主题" class="headerlink" title="设置Hexo的主题"></a>设置Hexo的主题</h2><ol>
-<li>下载Next主题<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> F:/github-blog/blog</span><br><span class="line"></span><br><span class="line">$ git <span class="built_in">clone</span> https://github.com/iissnan/hexo-theme-next themes/next</span><br></pre></td></tr></table></figure></li>
-<li>更改主题设置<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">打开D:\Hexo下的_config.yml文件，找到theme字段，将其修改为next</span><br><span class="line"></span><br><span class="line">theme: next</span><br></pre></td></tr></table></figure></li>
-<li>本地验证是否可用<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo s --debug</span><br></pre></td></tr></table></figure>
- 访问本地网址，查看主题是否变为Next。</li>
-<li>更新Github的主题<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo g -d</span><br></pre></td></tr></table></figure>
-
-</li>
-</ol>
-<h2 id="Hexo常用命令"><a href="#Hexo常用命令" class="headerlink" title="Hexo常用命令"></a>Hexo常用命令</h2><p>本文仅列出常用命令，详细内容请查阅<a href="https://hexo.io/zh-cn/docs/commands" target="_blank" rel="noopener">官网</a></p>
-<ol>
-<li><p>新建文章</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo n <span class="string">'文章名称'</span></span><br></pre></td></tr></table></figure></li>
-<li><p>生成静态文件</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p> 简写</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo g</span><br></pre></td></tr></table></figure>
-<p> 参数</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">-d, --deploy  文件生成后立即部署网站</span><br><span class="line">-w, --watch   监视文件变动</span><br></pre></td></tr></table></figure></li>
-<li><p>发表草稿</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo publish [layout] &lt;filename&gt;</span><br></pre></td></tr></table></figure></li>
-<li><p>启动本地服务器<br> 默认情况下，访问网址为： <a href="http://localhost:4000/。" target="_blank" rel="noopener">http://localhost:4000/。</a></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p> 简写</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo s</span><br></pre></td></tr></table></figure>
-<p> 参数</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">-p, --port    重设端口</span><br><span class="line">-s, --static  只使用静态文件</span><br><span class="line">-l, --log     启动日记记录，使用覆盖记录格式</span><br></pre></td></tr></table></figure></li>
-<li><p>部署网站</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p> 简写</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo d</span><br></pre></td></tr></table></figure>
-<p> 参数</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">-g, --generate  部署之前预先生成静态文件</span><br></pre></td></tr></table></figure>
-<p> 该方法最常用，在完成文章后，可将代码同步至GitHub上，就可以在线上查看博客了。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo d -g</span><br></pre></td></tr></table></figure>
-<p> 部署成功：<br> <img src="/images/Hexo/10.jpg" alt=""></p>
-<p> 这一步最容易失败，具体的解决方法移步至<a href="#报错原因">报错原因</a></p>
-</li>
-<li><p>清除缓存文件 (db.json) 和已生成的静态文件 (public)<br> 在某些情况（尤其是更换主题后），如果发现您对站点的更改无论如何也不生效，您可能需要运行该命令。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo clean</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>为文章设置标签和分类，请参考<a href="https://linlif.github.io/2017/05/27/Hexo%E4%BD%BF%E7%94%A8%E6%94%BB%E7%95%A5-%E6%B7%BB%E5%8A%A0%E5%88%86%E7%B1%BB%E5%8F%8A%E6%A0%87%E7%AD%BE" target="_blank" rel="noopener">文章</a>，感谢~</p>
-</li>
-<li><p>隐藏特定文章，只有有该文章的链接才可访问的方法，感谢博主大大的解惑<a href="https://blessing.studio/hexo-plugin-to-make-posts-sage-unlisted" target="_blank" rel="noopener">博文</a></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sage: true</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>将文件夹下的文章，按照年月日排序，参考<a href="https://blog.csdn.net/maosidiaoxian/article/details/85220394" target="_blank" rel="noopener">文章</a></p>
-</li>
-<li><p>引用图片的<a href="https://merrier.wang/20190111/image-skills-in-hexo.html" target="_blank" rel="noopener">方法</a>，通过本地引用绝对路径的方式，将图片放在source/images文件夹中，并在.md文件中按照“路径/Hexo/文件名”的方式引用：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">![](&#x2F;images&#x2F;Hexo&#x2F;文件名.jpg)</span><br></pre></td></tr></table></figure>
-<p><img src="/images/Hexo/9.jpg" alt=""></p>
-</li>
-</ol>
-<p>本文最后有介绍如何注册及绑定自己的域名，因为对服务器不熟悉，所以暂时还没有做，感兴趣的朋友可以参考一下呦！友情链接：<a href="http://www.jeyzhang.com/hexo-github-blog-building.html" target="_blank" rel="noopener">戳这里跳转</a></p>
-<h3 id="Hexo不重新生成也可预览"><a href="#Hexo不重新生成也可预览" class="headerlink" title="Hexo不重新生成也可预览"></a>Hexo不重新生成也可预览</h3><p>方法一：用hexo-browsersync插件</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ npm install hexo-browsersync --save</span><br></pre></td></tr></table></figure>
-<p>安装好后，不需任何设置，直接打开<code>hexo s</code>即可。</p>
-<p>修改文章后，当按下<code>Ctrl+S</code>保存时，页面自动刷新产生改变，同时右上角显示<code>Connected to BrowserSync</code>字样。</p>
-<p>方法二：用hexo-livereload插件</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ npm install hexo-livereload --save</span><br></pre></td></tr></table></figure>
-<p>然后在站点的<code>_config.yml</code>中配置 livereload 的端口为<code>35729</code>：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">livereload:</span><br><span class="line">  port: 35729</span><br></pre></td></tr></table></figure>
-<p>即可。<br><strong>经过测试，不设置端口也可以。</strong></p>
-<p>然后我们随便打开一篇博文，修改后保存，然后直接使用hexo s命令启动服务预览，在保持服务启动的状态下，再次修改该文章，记住要保存，然后刷新<a href="http://localhost:4000" target="_blank" rel="noopener">http://localhost:4000</a> 即可看到变化。</p>
-<p>优缺点<br>如果使用hexo-browsersync，在连接网络的情况下，启动服务hexo s能很快地打开；而在没有网络的情况下，输入hexo s后至少要过5分钟才能启动服务进行预览。但保存后不用刷新即可看到变化。<br>而hexo-livereload在无论离线还是有网时都能很快打开，但是保存后需要手动刷新才能看到变化。</p>
-<p>另外，编辑主题的_config.yml可以实时预览。而编辑D:\hexo_config.yml文件不能实时预览，需要重新生成后再预览：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo s -g</span><br></pre></td></tr></table></figure>
-<p>参考：<br><a href="https://github.com/hexojs/hexo-browsersync" target="_blank" rel="noopener">https://github.com/hexojs/hexo-browsersync</a><br><a href="http://hahack.com/codes/livereload-for-hexo/" target="_blank" rel="noopener">http://hahack.com/codes/livereload-for-hexo/</a><br><a href="https://github.com/hexojs/hexo-livereload" target="_blank" rel="noopener">https://github.com/hexojs/hexo-livereload</a></p>
-<h3 id="报错原因"><a href="#报错原因" class="headerlink" title="报错原因"></a>报错原因</h3><ol>
-<li><p>执行hexo d，最开始的报错内容：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ERROR Deployer not found: git</span><br></pre></td></tr></table></figure>
-<p> 执行命令行解决：</p>
- <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>再次执行hexo d，又报错：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ERROR: Permission to zoe-zc&#x2F;zoe-zc.github.io.git denied to 294401374.</span><br><span class="line">fatal: Could not read from remote repository.</span><br><span class="line"></span><br><span class="line">Please make sure you have the correct access rights</span><br><span class="line">and the repository exists.</span><br><span class="line">FATAL Something&#39;s wrong. Maybe you can find the solution here: https:&#x2F;&#x2F;hexo.io&#x2F;docs&#x2F;troubleshooting.html</span><br><span class="line">Error: Spawn failed</span><br><span class="line">    at ChildProcess.&lt;anonymous&gt; (F:\github-blog\blog\node_modules\hexo-util\lib\spawn.js:52:19)</span><br><span class="line">    at ChildProcess.emit (events.js:198:13)</span><br><span class="line">    at ChildProcess.cp.emit (F:\github-blog\blog\node_modules\cross-spawn\lib\enoent.js:40:29)</span><br><span class="line">    at Process.ChildProcess._handle.onexit (internal&#x2F;child_process.js:248:12)</span><br></pre></td></tr></table></figure>
-<p> 各种google下来也没解决，有的说删除.deploy_git文件夹，重新执行hexo d，在我这也不生效。还有说Git环境变量的问题，重新添加了也没用。后来删了项目重新安装也是不行，最后发现id_rsa.pub文件最后的邮箱不是Github的(邮箱是以前同事的名)，在本地重新生成id_rsa.pub文件。然后把GitHub上的SSH Keys删掉，添加新的SSH Keys后就好了。</p>
-</li>
-<li><p>如果上面的方法都尝试了，但还是报错的话，可以查看本地是否给git设置email和name，当email的值与Githab上SSH Keys的值不一致时，也会报权限问题的错误。<br> 特别是当Github有公司和自己两个账号时，注意检查一下email的值。如果值不对的话，可以按照下面的方法设置：</p>
- <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ git config --global user.name &quot;用户名&quot;</span><br><span class="line">$ git config --global user.email  &quot;Github邮箱名&quot;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>修改了Hexo的配置后，本地生效，在执行hexo d -g后线上的代码却不生效：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">解决办法：</span><br><span class="line">删除public&#x2F;css&#x2F;main.css后，重新执行hexo g，hexo d</span><br></pre></td></tr></table></figure>
-
-</li>
-</ol>
-<p>大成功~<br>&nbsp;</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>历时一天，终于配置好了属于自己的博客，下午开开心心的写了第一篇文章(也就是你看到的这篇！)。这个过程中遇到了许多问题，最主要原因是因为参考的文档太多太杂，没有从一开始就按照同一篇文章的步骤操作，导致出现了一些奇怪的问题。好在最后都顺利解决，撒花✿✿ヽ(°▽°)ノ✿</p>
-]]></content>
-      <categories>
-        <category>教程</category>
-      </categories>
-      <tags>
-        <tag>工具</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>如何用电脑使用手机蓝牙共享的网络</title>
-    <url>/2020/04/24/%E5%A6%82%E4%BD%95%E7%94%A8%E7%94%B5%E8%84%91%E4%BD%BF%E7%94%A8%E6%89%8B%E6%9C%BA%E8%93%9D%E7%89%99%E5%85%B1%E4%BA%AB%E7%9A%84%E7%BD%91%E7%BB%9C/</url>
-    <content><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>连接手机无线网的几种方法，亲测可用</p>
-<h3 id="USB网络共享"><a href="#USB网络共享" class="headerlink" title="USB网络共享"></a>USB网络共享</h3><p>这个方法其实是下载了PC端的万能钥匙后，在评论里有人提供连接的方法，是通过数据线来连接的。这样根本不需要使用软件，直接用数据线来实现网络共享就可以了！</p>
-<h4 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h4><ol>
-<li>需要一根数据线连接电脑和手机</li>
-<li>打开手机的设置(举例：一加7pro) -&gt; 热点 -&gt; 打开USB网络共享</li>
-<li>有可能会弹出一个弹窗，确认即可</li>
-<li>电脑网络连接的图标变为宽带连接时，就说明成功了</li>
-</ol>
-<p>这个方法的好处是方便快捷，操作简单。</p>
-<h3 id="蓝牙网络共享"><a href="#蓝牙网络共享" class="headerlink" title="蓝牙网络共享"></a>蓝牙网络共享</h3><p>数据线连接是挺简单方便的，但是有时候需要把手机拿到别的地方使用。就需要频繁的拔线插线，用久了就觉得好麻烦。后来，在网上查到可以蓝牙共享，而且手机正好支持这个功能，赶快实验了起来。</p>
-<p>最开始是不成功的，试了好多次，每次都是按照网上的说明来做的，但就是不成功。当时都要气疯了，一度以为是自己电脑的问题，以为是电脑太老了不支持(ThinkPad E531)。现在才知道，只是自己没操作对，Windows10版本怎么会不兼容呢… 0.0</p>
-<h4 id="方法-1"><a href="#方法-1" class="headerlink" title="方法"></a>方法</h4><ol>
-<li><p>打开电脑右下角的通知面板，找到<code>蓝牙</code>，点击打开蓝牙<br><img src="/images/20042401/1.jpg" alt=""></p>
-</li>
-<li><p>在任务栏的隐藏栏里找到蓝牙，右键选择<code>加入个人区域网</code><br><img src="/images/20042401/2.jpg" alt=""></p>
-</li>
-<li><p>此时，会打开<code>设备和打印机</code>的页面，第一次连接时，这里是没有设备的<br><img src="/images/20042401/4.jpg" alt=""></p>
-</li>
-<li><p>打开手机的蓝牙，连接蓝牙，需要是<code>可被发现</code>的状态<br><img src="/images/20042401/12.jpg" alt=""><br>然后在电脑的<code>设备和打印机</code>页面，点击菜单栏上的<code>添加设备</code><br><img src="/images/20042401/5.jpg" alt=""></p>
-</li>
-<li><p>出现添加设备的弹窗，就会开始搜索手机蓝牙，搜到手机设备后，选择出现的手机图标，点击<code>下一步</code><br><img src="/images/20042401/6.jpg" alt=""></p>
-</li>
-<li><p>连接时，手机会提示配对请求<br><img src="/images/20042401/13.jpg" alt=""><br> 点击后，会提示配对密码，点击<code>配对</code><br><img src="/images/20042401/14.jpg" alt=""><br> 点击电脑上的<code>是</code>，手机与电脑的蓝牙就进行连接了<br><img src="/images/20042401/7.jpg" alt=""><br> 连接成功，点击<code>关闭</code>即可<br><img src="/images/20042401/8.jpg" alt=""></p>
-</li>
-<li><p>现在就已经连接成功了，并且出现配对手机设备的名称和图标<br><img src="/images/20042401/3.jpg" alt=""></p>
-</li>
-<li><p>右键选中设备，选择<code>连接时使用</code> -&gt; <code>接入点</code><br><img src="/images/20042401/9.jpg" alt=""></p>
-</li>
-</ol>
-<p><strong>重点来了</strong>，如果选项显示的是<code>直接连接</code>，而不是<code>接入点</code>的话，那有的设备可能无法连接。即使电脑提示连接成功，但可能也没有网络。这时候先将配对的设备删除，重新执行上面的步骤，等到出现’正在手机安装’的提示就是可以的了。</p>
-<p>我的电脑之前连接时就是一直显示<code>直接连接</code>，点击<code>直接连接</code>后虽然提示’连接成功’，但实际上没有反应。试了了好多天，也没有找到解决办法，一度都以为是电脑问题要放弃了。后来自己又瞎试了一下，竟然成功了<del>嘻嘻</del></p>
-<p>果然，失败乃成功之母，无论过程怎么样，最后终会成功的</p>
-<ol start="9">
-<li><p>点击后，会出现<code>连接中</code>的弹窗，稍后提示<code>连接成功</code><br><img src="/images/20042401/10.jpg" alt=""></p>
-</li>
-<li><p>查看网络连接的图标，已经变成宽带连接了<br><img src="/images/20042401/11.jpg" alt=""><br>手机就是已连接的状态<br><img src="/images/20042401/15.jpg" alt=""></p>
-</li>
-</ol>
-<p><strong>断开后，再次连接时，先将手机的蓝牙和热点内的蓝牙网络共享都打开，电脑再进行连接，避免失败</strong></p>
-]]></content>
-      <categories>
-        <category>教程</category>
-      </categories>
-      <tags>
-        <tag>工具</tag>
-        <tag>windows</tag>
-        <tag>蓝牙共享</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>前端攻城狮的必备项--微信小程序</title>
     <url>/2019/04/18/%E5%89%8D%E7%AB%AF%E6%94%BB%E5%9F%8E%E7%8B%AE%E7%9A%84%E5%BF%85%E5%A4%87%E9%A1%B9--%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F/</url>
     <content><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>现在无论是微信还是其他软件都相继推出小程序应用，小程序具有，可见小程序现在的火爆程度，而作为始祖级别的微信小程序更成为了前端开发工程师们的必备的技术了</p>
@@ -1975,7 +1661,7 @@ circle，圈、空心圆</code></pre><p> 父子结构适用于：一个大的功
 <p>什么是编程接口？<br>已知的方法与需要操作对象的连接点，就叫做接口。通过接口就可以来操作这些对象，编程接口就是一个实现途径。</p>
 </blockquote>
 <p>DOM不能改变CSS样式表的内容，但是可以通过间接的方式改变HTML的行间样式来改变它。 实际是操作了HTML的元素，直接给元素添加了一些信息，而这些信息就是CSS的样式，通过这样间接的 添加/修改 行间样式的方式来改变的，没有改变CSS样式表。</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// DOM不能操作CSS样式表</span></span><br><span class="line"><span class="comment">// 但是可以操作HTML的元素的行间样式</span></span><br><span class="line"><span class="keyword">var</span> div = <span class="built_in">document</span>.getElementsByTagName(<span class="string">'div'</span>)[<span class="number">0</span>];</span><br><span class="line">    div.style.width = <span class="string">"100px"</span>;</span><br><span class="line">    div.style.height = <span class="string">"100px"</span>;</span><br><span class="line">    div.style.backgroundColor = <span class="string">"red"</span>;</span><br></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// DOM不能操作CSS样式表</span></span><br><span class="line"><span class="comment">// 但是可以操作HTML的元素的行间样式</span></span><br><span class="line"><span class="keyword">var</span> div = <span class="built_in">document</span>.getElementsByTagName(<span class="string">'div'</span>)[<span class="number">0</span>];</span><br><span class="line">div.style.width = <span class="string">"100px"</span>;</span><br><span class="line">div.style.height = <span class="string">"100px"</span>;</span><br><span class="line">div.style.backgroundColor = <span class="string">"red"</span>;</span><br></pre></td></tr></table></figure>
 
 <h3 id="DOM基本操作"><a href="#DOM基本操作" class="headerlink" title="DOM基本操作"></a>DOM基本操作</h3><h4 id="节点的查看方法"><a href="#节点的查看方法" class="headerlink" title="节点的查看方法"></a>节点的查看方法</h4><ol>
 <li>查看元素节点</li>
@@ -1984,7 +1670,8 @@ circle，圈、空心圆</code></pre><p> 父子结构适用于：一个大的功
 <li><p>document 是一个对象具有很多的方法，代表整个文档的js显示形式<br>  html标签只能代表文档的核心部分</p>
 </li>
 <li><p>document.getElementById()–&gt;元素id在IE8以下的浏览器，不区分id大小写，而且也返回匹配name属性的元素</p>
-  <figure class="highlight js"><table><tr><td class="code"><pre><span class="line">&lt;div id=<span class="string">"only"</span>&gt;<span class="number">123</span>&lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">&lt;div name="only"&gt;123&lt;/</span>div&gt;<span class="comment">// 针对IE8一下浏览器</span></span><br><span class="line"><span class="keyword">var</span> div = <span class="built_in">document</span>.getElementById(<span class="string">'only'</span>);</span><br><span class="line"><span class="built_in">console</span>.log(div);<span class="comment">// &lt;div id="only"&gt;123&lt;/div&gt;</span></span><br></pre></td></tr></table></figure></li>
+  <figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"only"</span>&gt;</span>123<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- 针对IE8一下浏览器 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">name</span>=<span class="string">"only"</span>&gt;</span>123<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+  <figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> div = <span class="built_in">document</span>.getElementById(<span class="string">'only'</span>);</span><br><span class="line"><span class="built_in">console</span>.log(div);<span class="comment">// &lt;div id="only"&gt;123&lt;/div&gt;</span></span><br></pre></td></tr></table></figure></li>
 <li><p>document.getElementsByTagName() –&gt; 通过标签名获取元素</p>
   <figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> div = <span class="built_in">document</span>.getElementsByTagName(<span class="string">'div'</span>);</span><br><span class="line"><span class="built_in">console</span>.log(div);<span class="comment">// HTMLCollection [div#only, only: div#only]</span></span><br></pre></td></tr></table></figure>
 <p>  1.得到的是一个类数组，无法调用数组的方法，但可以通过数组下标来获取元素<br>  2.最通用的方法，所有浏览器都支持并且没有兼容问题，IE4都可以正常使用<br>  3.参数是*时，可以选择所有的标签</p>
@@ -2113,8 +1800,8 @@ circle，圈、空心圆</code></pre><p> 父子结构适用于：一个大的功
 <li>getElementById方法定义在Document.prototype上，即Element节点上不能使用<br> 所有的HTMLDocument的元素都可以用，即document</li>
 <li>getElementsByName方法定义在HTMLDocument.prototype上，即非html中的document不能使用(如xml document, Element)</li>
 <li>getElementsByTagName方法定义在Document.protype和Element.prototype上 <figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> div7 = <span class="built_in">document</span>.getElementsByTagName(<span class="string">'div'</span>)[<span class="number">4</span>];</span><br><span class="line"><span class="keyword">var</span> span = div7.getElementsByTagName(<span class="string">'span'</span>)[<span class="number">0</span>];</span><br><span class="line"><span class="built_in">console</span>.log(span);<span class="comment">// &lt;span&gt;&lt;/span&gt;</span></span><br></pre></td></tr></table></figure></li>
-<li>HTMLDocument.prototype定义了一些常用的属性，body,head分别指代HTML文档中的<body><head>标签<br> <span style="color: #b3b0b0;font-size: 14px">这样就可以直接使用，而不用再通过获取元素的方法了：</span> <figure class="highlight js"><table><tr><td class="code"><pre><span class="line">    <span class="built_in">document</span>.body --&gt; <span class="xml"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span></span><br><span class="line">    document.head --&gt; &lt;head&gt;</span><br></pre></td></tr></table></figure></li>
-<li>Document.prototype上定义了documentElement属性，指点文档的根元素，在HTML文档中，它总是指代<html>元素 <figure class="highlight js"><table><tr><td class="code"><pre><span class="line">    <span class="built_in">document</span>.documentElement --&gt; <span class="xml"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span></span><br></pre></td></tr></table></figure></li>
+<li>HTMLDocument.prototype定义了一些常用的属性，body,head分别指代HTML文档中的<body><head>标签<br> <span style="color: #b3b0b0;font-size: 14px">这样就可以直接使用，而不用再通过获取元素的方法了：</span> <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">document.body --&gt; &lt;body&gt;</span><br><span class="line">document.head --&gt; &lt;head&gt;</span><br></pre></td></tr></table></figure></li>
+<li>Document.prototype上定义了documentElement属性，指点文档的根元素，在HTML文档中，它总是指代<html>元素 <figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="built_in">document</span>.documentElement --&gt; <span class="xml"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span></span><br></pre></td></tr></table></figure></li>
 <li>getElementsByClassName、querySelector、querySelectorAll在Document.prototype, Element.prototype类中均有定义</li>
 </ol>
 <h3 id="DOM基本操作-–-增删改替"><a href="#DOM基本操作-–-增删改替" class="headerlink" title="DOM基本操作 – 增删改替"></a>DOM基本操作 – 增删改替</h3><ol>
@@ -2142,7 +1829,7 @@ circle，圈、空心圆</code></pre><p> 父子结构适用于：一个大的功
 </ol>
 <h3 id="Element-节点的一些属性"><a href="#Element-节点的一些属性" class="headerlink" title="Element 节点的一些属性"></a>Element 节点的一些属性</h3><ol>
 <li><strong>innerHTML</strong><br> ① 改变元素的 html 内容，可以进行读写 <figure class="highlight js"><table><tr><td class="code"><pre><span class="line">span.innerHTML = <span class="string">'123'</span>;</span><br><span class="line">span.innerHTML += <span class="string">"456"</span>;<span class="comment">// 追加赋值</span></span><br></pre></td></tr></table></figure>
- ② 可以写入html结构的字符串 <figure class="highlight js"><table><tr><td class="code"><pre><span class="line">    span.innerHTML = <span class="string">"&lt;span style='background: red;</span></span><br><span class="line"><span class="string">font-size: 20px'&gt;123&lt;/span&gt;"</span>;</span><br></pre></td></tr></table></figure>
+ ② 可以写入html结构的字符串 <figure class="highlight js"><table><tr><td class="code"><pre><span class="line">span.innerHTML = <span class="string">"&lt;span style='background: red;font-size: 20px'&gt;123&lt;/span&gt;"</span>;</span><br></pre></td></tr></table></figure>
  <img src="/images/20062601/js9/Image%5B1%5D.png" alt=""><br> 代码结果：<br> <img src="/images/20062601/js9/Image%5B2%5D.png" alt=""></li>
 <li>innerText（旧版本火狐不兼容）/ textContent（火狐支持，但是老版本IE不好使）<br> 读取 / 修改元素的文本内容，在赋值时如果元素内有标签元素会被覆盖，仅建议修改文本赋值。<br> 原本代码：<br> <img src="/images/20062601/js9/Image%5B3%5D.png" alt=""><br> 修改innerText后： <figure class="highlight js"><table><tr><td class="code"><pre><span class="line">span.innerText = <span class="string">"789"</span>;</span><br></pre></td></tr></table></figure>
  <img src="/images/20062601/js9/Image%5B4%5D.png" alt=""></li>
@@ -2817,5 +2504,304 @@ circle，圈、空心圆</code></pre><p> 父子结构适用于：一个大的功
 </li>
 </ul>
 <h3 id="特殊符号不能直接匹配，需要进行转义"><a href="#特殊符号不能直接匹配，需要进行转义" class="headerlink" title="特殊符号不能直接匹配，需要进行转义"></a>特殊符号不能直接匹配，需要进行转义</h3><h3 id="最难面试题"><a href="#最难面试题" class="headerlink" title="最难面试题"></a>最难面试题</h3><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 科学技术法：从后向前查，每隔三位加一个符号</span></span><br><span class="line"><span class="keyword">var</span> string5 = <span class="string">"100000000000"</span>;</span><br><span class="line"><span class="keyword">var</span> regexp7 = <span class="regexp">/(?=(\B)(\d&#123;3&#125;)+$)/g</span>;</span><br><span class="line"><span class="keyword">var</span> newArr = string5.replace(regexp7, <span class="string">"."</span>);</span><br><span class="line"><span class="built_in">console</span>.log(newArr);<span class="comment">// 100.000.000.000</span></span><br></pre></td></tr></table></figure>]]></content>
+  </entry>
+  <entry>
+    <title>GitHub + Hexo搭建博客</title>
+    <url>/2018/07/30/GitHub%20+%20Hexo%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/</url>
+    <content><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>做前端开发有几年了，之前一直都是在印象笔记上做记录，可以搜索觉得也挺方便的。</p>
+<p>最近突然觉得这样记录下来的内容太碎片化，都是一些常用的方法和解决Bug的方法，并没有对一个问题进行过深入分析和探讨，所以觉得对很多地方的理解比较片面化而且记忆也不牢固。</p>
+<p>由此，打算做一个简单的个人博客，用于对平时工作中遇到的问题做总结记录、发表个人己见的日志。</p>
+<h2 id="了解GitHub-Pages"><a href="#了解GitHub-Pages" class="headerlink" title="了解GitHub Pages"></a>了解GitHub Pages</h2><p>博客的内容属于展示性的静态页面，不需要与后端进行数据交互。之前使用过GitHub Pages功能，GitHub可以托管项目代码，想要查看页面只需要把代码打包好上传并在相应的域名访问即可</p>
+<h2 id="搭建过程-windows环境"><a href="#搭建过程-windows环境" class="headerlink" title="搭建过程(windows环境)"></a>搭建过程(windows环境)</h2><p>搭建过程主要是参考了jeyzhang的<a href="http://www.jeyzhang.com/hexo-github-blog-building.html" target="_blank" rel="noopener">文章</a>，作者大大写的非常详细，只要一步一步的跟着做都会成功的。当然还有专业的文档也可以参考<a href="https://hexo.io/zh-cn/docs/" target="_blank" rel="noopener">官方文档</a></p>
+<p><strong>如果换电脑了，或者环境丢失时，可同样按照下面的搭建步骤操作</strong></p>
+<ol>
+<li><p>安装依赖<br>-<a href="http://nodejs.org/" target="_blank" rel="noopener">node.js</a><br>-<a href="https://git-scm.com/download/win" target="_blank" rel="noopener">Git</a></p>
+</li>
+<li><p>依赖安装完成后，安装<strong>Hexo</strong>，打开Git powershell(或cmd)执行命令行</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="variable">$</span> npm install <span class="literal">-g</span> hexo<span class="literal">-cli</span></span><br></pre></td></tr></table></figure>
+<p> <img src="/images/Hexo/1.jpg" alt=""></p>
+</li>
+<li><p>安装成功后，选择一个放项目的文件夹，初始化项目<br>我的项目存在F盘，当前路径是F:/github-blog</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="variable">$</span> hexo init blog</span><br><span class="line"><span class="variable">$</span> cd blog/</span><br><span class="line"><span class="variable">$</span> npm install</span><br></pre></td></tr></table></figure>
+<p> <img src="/images/Hexo/2.jpg" alt=""></p>
+</li>
+<li><p>启动本地服务</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="variable">$</span> hexo s</span><br></pre></td></tr></table></figure>
+<p> 启动成功后，展示如下：<br> <img src="/images/Hexo/3.jpg" alt=""></p>
+<p> 现在就可以在<a href="http://localhost:4000" target="_blank" rel="noopener">本地 http://localhost:4000</a>查看Hexo默认主题效果啦。</p>
+</li>
+</ol>
+<h2 id="线上访问"><a href="#线上访问" class="headerlink" title="线上访问"></a>线上访问</h2><p>本地服务启动成功后，就可以在本地进行博客的新建、编辑了。不过在这之前，先将本地博客与Github进行关联，来托管项目并查看线上效果。</p>
+<ol>
+<li><p>在<a href="https://github.com/" target="_blank" rel="noopener">Github官网</a>注册账号，并创建项目</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">点击页面右上角的+图标，选择New repository。</span><br><span class="line"></span><br><span class="line">在Repository name中填写你的Github账号名.github.io，如：zoe-zc.github.io。</span><br><span class="line"></span><br><span class="line">Description中填写对此repository的描述信息(可选，但建议填写，如Personal website)。</span><br><span class="line"></span><br><span class="line">点击Create repository，完成创建。</span><br></pre></td></tr></table></figure>
+<p> <img src="/images/Hexo/4.jpg" alt=""></p>
+</li>
+<li><p>创建好项目后，需要绑定Github的SSH Keys</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="variable">$</span> cd ~/.ssh</span><br></pre></td></tr></table></figure>
+<p> 先进入.ssh目录，或者直接在文件管理器中打开，一般路径是：C:\Users\89513<br> <img src="/images/Hexo/11.jpg" alt=""></p>
+<p> 若没有.ssh目录，则生成新的SSH Keys：</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="variable">$</span> ssh<span class="literal">-keygen</span> <span class="literal">-t</span> rsa <span class="literal">-C</span> <span class="string">"your e-mail(注册Github的邮箱)"</span></span><br></pre></td></tr></table></figure>
+<p> <em>注意：这里的邮箱是注册Github的邮箱，不清楚邮箱的可以在下图位置查询</em><br> <img src="/images/Hexo/12.jpg" alt=""></p>
+</li>
+<li><p>SSH Key生成成功后，复制<code>~/.ssh/id_rsa.pub</code>文件的内容(包括最后的邮箱)</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="variable">$</span> cat ~/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
+<p> cat+文件名：打印文件的内容</p>
+</li>
+<li><p>在Github添加SSH Key</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">打开Github官网，登陆后进入到个人设置(点击头像-&gt;setting)，点击右侧的SSH Keys，点击Add SSH key；填写title之后，将之前复制的内容粘贴到Key框中，最后点击Add key即可。</span><br></pre></td></tr></table></figure>
+<p> <img src="/images/Hexo/5.jpg" alt=""></p>
+</li>
+<li><p>检测SSH是否配置成功</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="variable">$</span> ssh <span class="literal">-T</span> git@github.com</span><br></pre></td></tr></table></figure>
+<p> 若配置成功，则显示：<br> <img src="/images/Hexo/7.png" alt=""></p>
+<p> 如果之前设置过SSH keys，但在本地执行检测语句失败时，可以重新复制<code>~/.ssh/id_rsa.pub</code>文件的内容，并在Github上删除原来的SSH keys，添加新的SSH keys。<br> <img src="/images/Hexo/6.jpg" alt=""></p>
+</li>
+<li><p>绑定GitHub，将博客发布到Github的同名repository中</p>
+<p> 打开<strong>F:/github-blog/blog</strong>文件夹下的_config.yml文件，拖动滚动条至文件最末端，找到图中的位置并修改：<br> <img src="/images/Hexo/8.jpg" alt=""></p>
+<p> 改为：</p>
+ <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">deploy:</span><br><span class="line">type: git</span><br><span class="line">repo: git@github.com:zoe-zc&#x2F;zoe-zc.github.io</span><br></pre></td></tr></table></figure>
+<p> <strong>注</strong>： (1) zoe-zc替换成你的Github账户名; (2) 注意在yml文件中，符号“:”后面都是要带空格的。</p>
+</li>
+</ol>
+<p>现在可以通过访问线上域名<a href="https://zoe-zc.github.io/" target="_blank" rel="noopener">https://zoe-zc.github.io/</a>来查看自己的博客了。</p>
+<p>至此，本地博客搭建并与GitHub绑定都完成了，默认的主题不太喜欢，决定换成Next主题。</p>
+<h2 id="设置主题"><a href="#设置主题" class="headerlink" title="设置主题"></a>设置主题</h2><ol>
+<li>下载Next主题<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="variable">$</span> cd F:/github<span class="literal">-blog</span>/blog</span><br><span class="line"><span class="variable">$</span> git clone https://github.com/iissnan/hexo<span class="literal">-theme</span><span class="literal">-next</span> themes/next</span><br></pre></td></tr></table></figure></li>
+<li>更改主题设置<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">打开D:\Hexo下的_config.yml文件，找到theme字段，将其修改为next</span><br><span class="line"></span><br><span class="line">theme: next</span><br></pre></td></tr></table></figure></li>
+<li>本地验证是否可用<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="variable">$</span> hexo s -<span class="literal">-debug</span></span><br></pre></td></tr></table></figure>
+ 访问本地网址，查看主题是否变为Next。</li>
+<li>更新Github的主题<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="variable">$</span> hexo g <span class="literal">-d</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h2 id="NexT主题升级-推荐"><a href="#NexT主题升级-推荐" class="headerlink" title="NexT主题升级(推荐)"></a>NexT主题升级(推荐)</h2><p>之前一直在用next5.1.4版本，用着也还可以的，但是搜索功能突然不能用了。无论是将主题卸载，还是将所有的md文件移除都没有用。一番谷歌百度都没找到好的解决办法，所以没办法只能选择将原本版本弃用，新建了仓库和项目T.T</p>
+<p>也看到好多人都已经用了新版的主题，我也摩拳擦掌的跃跃欲试，反正也是从头开始，也不怕出错，但出乎意料的顺利就安装成功了，而且搜索功能也能正常使用，推到了gitHub上也一样使用。开心<del>总算没有白忙活 ~^O^</del></p>
+<h3 id="下载主题"><a href="#下载主题" class="headerlink" title="下载主题"></a>下载主题</h3><pre><code><figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="variable">$</span> git clone https://github.com/theme<span class="literal">-next</span>/hexo<span class="literal">-theme</span><span class="literal">-next</span> themes/next7</span><br></pre></td></tr></table></figure></code></pre><h3 id="切换主题"><a href="#切换主题" class="headerlink" title="切换主题"></a>切换主题</h3><pre><code>文件：`blog/_config.yml`
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="comment">#theme: next</span></span><br><span class="line"><span class="attr">theme:</span> <span class="string">next7</span></span><br></pre></td></tr></table></figure></code></pre><h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><ol>
+<li>favicon <figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">favicon:</span></span><br><span class="line">  <span class="attr">small:</span> <span class="string">/images/ego-blog.png</span> <span class="comment">#/images/favicon-16x16-next.png</span></span><br><span class="line">  <span class="attr">medium:</span> <span class="string">/images/ego-blog</span> <span class="string">(1).png</span> <span class="comment">#/images/favicon-32x32-next.png</span></span><br><span class="line">  <span class="attr">apple_touch_icon:</span> <span class="string">/images/apple-touch-icon-next.png</span></span><br><span class="line">  <span class="attr">safari_pinned_tab:</span> <span class="string">/images/logo.svg</span></span><br><span class="line">  <span class="comment">#android_manifest: /images/manifest.json</span></span><br><span class="line">  <span class="comment">#ms_browserconfig: /images/browserconfig.xml</span></span><br></pre></td></tr></table></figure></li>
+<li>footer <figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">footer:</span></span><br><span class="line">  <span class="comment"># Specify the date when the site was setup. If not defined, current year will be used.</span></span><br><span class="line">  <span class="attr">since:</span> <span class="number">2018</span></span><br></pre></td></tr></table></figure></li>
+<li>scheme，切换不同主题样式 <figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Schemes</span></span><br><span class="line"><span class="comment"># scheme: Muse</span></span><br><span class="line"><span class="comment">#scheme: Mist</span></span><br><span class="line"><span class="attr">scheme:</span> <span class="string">Pisces</span> <span class="comment">#当前博客样式</span></span><br><span class="line"><span class="comment">#scheme: Gemini</span></span><br></pre></td></tr></table></figure></li>
+<li>选择菜单栏展示的页面 <figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">menu:</span></span><br><span class="line">  <span class="attr">home:</span> <span class="string">/</span> <span class="string">||</span> <span class="string">fa</span> <span class="string">fa-home</span></span><br><span class="line">  <span class="comment">#about: /about/ || fa fa-user</span></span><br><span class="line">  <span class="attr">tags:</span> <span class="string">/tags/</span> <span class="string">||</span> <span class="string">fa</span> <span class="string">fa-tags</span></span><br><span class="line">  <span class="attr">categories:</span> <span class="string">/categories/</span> <span class="string">||</span> <span class="string">fa</span> <span class="string">fa-th</span></span><br><span class="line">  <span class="attr">archives:</span> <span class="string">/archives/</span> <span class="string">||</span> <span class="string">fa</span> <span class="string">fa-archive</span></span><br><span class="line">  <span class="attr">schedule:</span> <span class="string">/schedule/</span> <span class="string">||</span> <span class="string">fa</span> <span class="string">fa-calendar</span></span><br><span class="line">  <span class="comment">#sitemap: /sitemap.xml || fa fa-sitemap</span></span><br><span class="line">  <span class="comment">#commonweal: /404/ || fa fa-heartbeat</span></span><br></pre></td></tr></table></figure></li>
+<li>设置头像 <figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">avatar:</span></span><br><span class="line">  <span class="comment"># Replace the default image and set the url here.</span></span><br><span class="line">  <span class="attr">url:</span> <span class="string">https://tvax2.sinaimg.cn/crop.0.0.960.960.180/b4866dcfly8fp6p33spu1j20qo0qomz2.jpg?Expires=1564549093&amp;ssig=e3yJPxIPmx&amp;KID=imgbed,tva</span></span><br><span class="line">  <span class="comment"># If true, the avatar will be dispalyed in circle.</span></span><br><span class="line">  <span class="attr">rounded:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># If true, the avatar will be rotated with the cursor.</span></span><br><span class="line">  <span class="attr">rotated:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">animation:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure></li>
+<li>设置自己其他网站的链接 <figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">social:</span></span><br><span class="line">  <span class="attr">GitHub:</span> <span class="string">https://github.com/zoe-zc</span> <span class="string">||</span> <span class="string">fab</span> <span class="string">fa-github</span></span><br></pre></td></tr></table></figure></li>
+<li>回到顶部 <figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">back2top:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># Back to top in sidebar.</span></span><br><span class="line">  <span class="attr">sidebar:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># Scroll percent label in b2t button.</span></span><br><span class="line">  <span class="attr">scrollpercent:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure></li>
+<li>阅读进度条 <figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">reading_progress:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># Available values: top | bottom</span></span><br><span class="line">  <span class="attr">position:</span> <span class="string">top</span></span><br><span class="line">  <span class="attr">color:</span> <span class="string">"#37c6c0"</span></span><br><span class="line">  <span class="attr">height:</span> <span class="string">3px</span></span><br></pre></td></tr></table></figure></li>
+<li>右上角gitHub图标 <figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">github_banner:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">permalink:</span> <span class="string">https://github.com/zoe-zc</span></span><br><span class="line">  <span class="attr">title:</span> <span class="string">Follow</span> <span class="string">me</span> <span class="string">on</span> <span class="string">GitHub</span></span><br></pre></td></tr></table></figure></li>
+<li>自定义字体<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">font:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">global:</span></span><br><span class="line">    <span class="attr">external:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">family:</span> </span><br><span class="line">    <span class="comment"># size: 0.9375 #1rem = 16px</span></span><br><span class="line">    <span class="attr">size:</span> <span class="number">0.875</span> <span class="comment">#1rem = 16px</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">headings:</span></span><br><span class="line">    <span class="attr">external:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">family:</span> <span class="string">Roboto</span> <span class="string">Slab</span></span><br><span class="line">    <span class="attr">size:</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">codes:</span></span><br><span class="line">    <span class="attr">external:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">family:</span> <span class="string">PT</span> <span class="string">Mono</span></span><br></pre></td></tr></table></figure></li>
+<li>图片预览<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">fancybox:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure></li>
+<li>本地搜索<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">local_search:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure></li>
+<li>加载进度条<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">pace:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<p>如果有5.x版本的小伙伴升级可以参考这里 → <a href="http://claude-ray.com/2019/06/28/hexo-theme-next-upgrade-7/" target="_blank" rel="noopener">Hexo NexT 主题升级</a></p>
+<p>推荐下载next7最新版主题，整体看起来比5.x.x版本看起来舒服很多，而且感觉也比之前的版本好用</p>
+<h2 id="Hexo常用命令"><a href="#Hexo常用命令" class="headerlink" title="Hexo常用命令"></a>Hexo常用命令</h2><p>本文仅列出常用命令，详细内容请查阅<a href="https://hexo.io/zh-cn/docs/commands" target="_blank" rel="noopener">官网</a></p>
+<ol>
+<li><p>新建文章</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="variable">$</span> hexo n <span class="string">'文章名称'</span></span><br></pre></td></tr></table></figure></li>
+<li><p>生成静态文件</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="variable">$</span> hexo generate</span><br></pre></td></tr></table></figure>
+<p> 简写</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="variable">$</span> hexo g</span><br></pre></td></tr></table></figure>
+<p> 参数</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">-d, --deploy  文件生成后立即部署网站</span><br><span class="line">-w, --watch   监视文件变动</span><br></pre></td></tr></table></figure></li>
+<li><p>发表草稿</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="variable">$</span> hexo publish [<span class="type">layout</span>] &lt;filename&gt;</span><br></pre></td></tr></table></figure></li>
+<li><p>启动本地服务器<br> 默认情况下，访问网址为： <a href="http://localhost:4000/。" target="_blank" rel="noopener">http://localhost:4000/。</a></p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="variable">$</span> hexo server</span><br></pre></td></tr></table></figure>
+<p> 简写</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="variable">$</span> hexo s</span><br></pre></td></tr></table></figure>
+<p> 参数</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">-p, --port    重设端口</span><br><span class="line">-s, --static  只使用静态文件</span><br><span class="line">-l, --log     启动日记记录，使用覆盖记录格式</span><br></pre></td></tr></table></figure></li>
+<li><p>部署网站</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="variable">$</span> hexo deploy</span><br></pre></td></tr></table></figure>
+<p> 简写</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="variable">$</span> hexo d</span><br></pre></td></tr></table></figure>
+<p> 参数</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">-g, --generate  部署之前预先生成静态文件</span><br></pre></td></tr></table></figure>
+<p> 该方法最常用，在完成文章后，可将代码同步至GitHub上，就可以在线上查看博客了。</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="variable">$</span> hexo d <span class="literal">-g</span></span><br></pre></td></tr></table></figure>
+<p> 部署成功：<br> <img src="/images/Hexo/10.jpg" alt=""></p>
+<p> 这一步最容易失败，具体的解决方法移步至<a href="#报错原因">报错原因</a></p>
+</li>
+<li><p>清除缓存文件 (db.json) 和已生成的静态文件 (public)<br> 在某些情况（尤其是更换主题后），如果发现您对站点的更改无论如何也不生效，您可能需要运行该命令。</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="variable">$</span> hexo clean</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h2 id="Hexo优化设置"><a href="#Hexo优化设置" class="headerlink" title="Hexo优化设置"></a>Hexo优化设置</h2><h3 id="为文章设置标签和分类"><a href="#为文章设置标签和分类" class="headerlink" title="为文章设置标签和分类"></a>为文章设置标签和分类</h3><p>请参考<a href="https://linlif.github.io/2017/05/27/Hexo%E4%BD%BF%E7%94%A8%E6%94%BB%E7%95%A5-%E6%B7%BB%E5%8A%A0%E5%88%86%E7%B1%BB%E5%8F%8A%E6%A0%87%E7%AD%BE" target="_blank" rel="noopener">文章</a>，感谢~</p>
+<h3 id="隐藏文章"><a href="#隐藏文章" class="headerlink" title="隐藏文章"></a>隐藏文章</h3><p>隐藏特定文章，只有有该文章的链接才可访问的方法，参考自<a href="https://blessing.studio/hexo-plugin-to-make-posts-sage-unlisted" target="_blank" rel="noopener">这里</a></p>
+<p>代码位置：</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">---</span><br><span class="line">title: title</span><br><span class="line">date: date</span><br><span class="line">sage: true <span class="comment"># 为true时，隐藏当前文章</span></span><br><span class="line">---</span><br></pre></td></tr></table></figure>
+
+<h3 id="文件目录按照日期排序"><a href="#文件目录按照日期排序" class="headerlink" title="文件目录按照日期排序"></a>文件目录按照日期排序</h3><p>由于生成的新文章都在<code>source/_post/</code>下，当文章多了以后难以查找和维护，想要不改变文章的访问链接，仅将<code>md文件</code>按照日期来归档储存</p>
+<p><strong>解决办法</strong>：</p>
+<ol>
+<li><p>修改链接<br> 文件：<code>/blog/_config.yml</code></p>
+ <figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">permalink: :year/:month/:day/:title/</span><br><span class="line">new_post_name: :year/:month/:day/:title.md <span class="comment"># File name of new posts</span></span><br></pre></td></tr></table></figure></li>
+<li><p>修改模板<br> 文件：<code>scaffolds/post.md</code></p>
+ <figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">---</span><br><span class="line">title: &#123;&#123; title &#125;&#125;</span><br><span class="line">permalink: &#123;&#123; title &#125;&#125; <span class="comment"># 增加permalink</span></span><br><span class="line">date: &#123;&#123; date &#125;&#125;</span><br><span class="line">tags:</span><br><span class="line">categories:</span><br><span class="line">---</span><br></pre></td></tr></table></figure>
+
+<p> 执行<code>hexo new post [title]</code>创建文章时，注意把标题里的<code>空格</code>换为<code>-</code></p>
+</li>
+</ol>
+<p>将文件夹下的文章，按照年月日排序，参考<a href="https://blog.csdn.net/maosidiaoxian/article/details/85220394" target="_blank" rel="noopener">文章</a></p>
+<h3 id="引用图片"><a href="#引用图片" class="headerlink" title="引用图片"></a>引用图片</h3><p>引用图片的<a href="https://merrier.wang/20190111/image-skills-in-hexo.html" target="_blank" rel="noopener">方法</a>，通过本地引用绝对路径的方式，将图片放在source/images文件夹中，并在.md文件中按照“路径/Hexo/文件名”的方式引用：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">![](&#x2F;images&#x2F;Hexo&#x2F;文件名.jpg)</span><br></pre></td></tr></table></figure>
+<p><img src="/images/Hexo/9.jpg" alt=""></p>
+<h3 id="修改代码块code的样式（next7）"><a href="#修改代码块code的样式（next7）" class="headerlink" title="修改代码块code的样式（next7）"></a>修改代码块code的样式（next7）</h3><p>文件：<code>blog/themes/next7/source/css/_variables/base.styl</code></p>
+<figure class="highlight styl"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Code &amp; Code Blocks</span></span><br><span class="line"><span class="comment">// --------------------------------------------------</span></span><br><span class="line"><span class="variable">$code</span>-<span class="attribute">font-family</span>               = <span class="variable">$font</span>-family-monospace;</span><br><span class="line"><span class="variable">$code</span>-<span class="attribute">border-radius</span>             = <span class="number">2px</span>;</span><br><span class="line">$code-foreground                = #d63200; // 字体颜色</span><br><span class="line"><span class="variable">$code</span>-<span class="attribute">background</span>                = <span class="number">#f8f8f8</span>; <span class="comment">// 背景色</span></span><br></pre></td></tr></table></figure>
+<h3 id="修改鼠标选中区域样式（next7）"><a href="#修改鼠标选中区域样式（next7）" class="headerlink" title="修改鼠标选中区域样式（next7）"></a>修改鼠标选中区域样式（next7）</h3><p>文件：<code>blog/themes/next7/source/css/_variables/base.styl</code></p>
+<figure class="highlight styl"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Selection</span></span><br><span class="line">$selection-bg                 = #49b1f5;</span><br><span class="line"><span class="variable">$selection</span>-<span class="attribute">color</span>              = white;</span><br></pre></td></tr></table></figure>
+
+<h2 id="注册及绑定自己的域名"><a href="#注册及绑定自己的域名" class="headerlink" title="注册及绑定自己的域名"></a>注册及绑定自己的域名</h2><p><a href="http://www.jeyzhang.com/hexo-github-blog-building.html" target="_blank" rel="noopener">如何注册及绑定自己的域名</a></p>
+<h2 id="Hexo不重新生成也可预览"><a href="#Hexo不重新生成也可预览" class="headerlink" title="Hexo不重新生成也可预览"></a>Hexo不重新生成也可预览</h2><p>方法一：用hexo-browsersync插件</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="variable">$</span> npm install hexo<span class="literal">-browsersync</span> -<span class="literal">-save</span></span><br></pre></td></tr></table></figure>
+<p>安装好后，不需任何设置，直接打开<code>hexo s</code>即可。</p>
+<p>修改文章后，当按下<code>Ctrl+S</code>保存时，页面自动刷新产生改变，同时右上角显示<code>Connected to BrowserSync</code>字样。</p>
+<p>方法二：用hexo-livereload插件</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="variable">$</span> npm install hexo<span class="literal">-livereload</span> -<span class="literal">-save</span></span><br></pre></td></tr></table></figure>
+<p>然后在站点的<code>_config.yml</code>中配置 livereload 的端口为<code>35729</code>：</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">livereload:</span><br><span class="line">  port: <span class="number">35729</span></span><br></pre></td></tr></table></figure>
+<p>即可。<br><strong>经过测试，不设置端口也可以。</strong></p>
+<p>然后我们随便打开一篇博文，修改后保存，然后直接使用hexo s命令启动服务预览，在保持服务启动的状态下，再次修改该文章，记住要保存，然后刷新<a href="http://localhost:4000" target="_blank" rel="noopener">http://localhost:4000</a> 即可看到变化。</p>
+<p>优缺点<br>如果使用hexo-browsersync，在连接网络的情况下，启动服务hexo s能很快地打开；而在没有网络的情况下，输入hexo s后至少要过5分钟才能启动服务进行预览。但保存后不用刷新即可看到变化。<br>而hexo-livereload在无论离线还是有网时都能很快打开，但是保存后需要手动刷新才能看到变化。</p>
+<p>另外，编辑主题的_config.yml可以实时预览。而编辑D:\hexo_config.yml文件不能实时预览，需要重新生成后再预览：</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">hexo s <span class="literal">-g</span></span><br></pre></td></tr></table></figure>
+<p>参考：<br><a href="https://github.com/hexojs/hexo-browsersync" target="_blank" rel="noopener">https://github.com/hexojs/hexo-browsersync</a><br><a href="http://hahack.com/codes/livereload-for-hexo/" target="_blank" rel="noopener">http://hahack.com/codes/livereload-for-hexo/</a><br><a href="https://github.com/hexojs/hexo-livereload" target="_blank" rel="noopener">https://github.com/hexojs/hexo-livereload</a></p>
+<h2 id="报错原因小结"><a href="#报错原因小结" class="headerlink" title="报错原因小结"></a>报错原因小结</h2><ol>
+<li><p>执行hexo d，最开始的报错内容：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ERROR Deployer not found: git</span><br></pre></td></tr></table></figure>
+<p> 执行命令行解决：</p>
+ <figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="variable">$</span> npm install hexo<span class="literal">-deployer</span><span class="literal">-git</span> -<span class="literal">-save</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>再次执行hexo d，又报错：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ERROR: Permission to zoe-zc&#x2F;zoe-zc.github.io.git denied to 294401374.</span><br><span class="line">fatal: Could not read from remote repository.</span><br><span class="line"></span><br><span class="line">Please make sure you have the correct access rights</span><br><span class="line">and the repository exists.</span><br><span class="line">FATAL Something&#39;s wrong. Maybe you can find the solution here: https:&#x2F;&#x2F;hexo.io&#x2F;docs&#x2F;troubleshooting.html</span><br><span class="line">Error: Spawn failed</span><br><span class="line">    at ChildProcess.&lt;anonymous&gt; (F:\github-blog\blog\node_modules\hexo-util\lib\spawn.js:52:19)</span><br><span class="line">    at ChildProcess.emit (events.js:198:13)</span><br><span class="line">    at ChildProcess.cp.emit (F:\github-blog\blog\node_modules\cross-spawn\lib\enoent.js:40:29)</span><br><span class="line">    at Process.ChildProcess._handle.onexit (internal&#x2F;child_process.js:248:12)</span><br></pre></td></tr></table></figure>
+<p> 各种google下来也没解决，有的说删除.deploy_git文件夹，重新执行hexo d，在我这也不生效。还有说Git环境变量的问题，重新添加了也没用。后来删了项目重新安装也是不行，最后发现id_rsa.pub文件最后的邮箱不是Github的(邮箱是以前同事的名)，在本地重新生成id_rsa.pub文件。然后把GitHub上的SSH Keys删掉，添加新的SSH Keys后就好了。</p>
+</li>
+<li><p>如果上面的方法都尝试了，但还是报错的话，可以查看本地是否给git设置email和name，当email的值与Githab上SSH Keys的值不一致时，也会报权限问题的错误。<br> 特别是当Github有公司和自己两个账号时，注意检查一下email的值。如果值不对的话，可以按照下面的方法设置：</p>
+ <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ git config --global user.name &quot;用户名&quot;</span><br><span class="line">$ git config --global user.email  &quot;Github邮箱名&quot;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>修改了Hexo的配置后，本地生效，在执行hexo d -g后线上的代码却不生效：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">解决办法：</span><br><span class="line">删除public&#x2F;css&#x2F;main.css后，重新执行hexo g，hexo d</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<p>大成功~<br>&nbsp;</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>历时一天，终于配置好了属于自己的博客，下午开开心心的写了第一篇文章(也就是你看到的这篇！)。这个过程中遇到了许多问题，最主要原因是因为参考的文档太多太杂，没有从一开始就按照同一篇文章的步骤操作，导致出现了一些奇怪的问题。好在最后都顺利解决，撒花✿✿ヽ(°▽°)ノ✿</p>
+]]></content>
+      <categories>
+        <category>教程</category>
+      </categories>
+      <tags>
+        <tag>工具</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>ElementUI Upload组件上传图片</title>
+    <url>/2019/08/07/2019-08-ElementUI-Upload%E7%BB%84%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%9B%BE%E7%89%87/</url>
+    <content><![CDATA[<p>ElementUI组件使用真的很方便，不过因为是封装好的组件所以在项目中使用的局限性也比较大，官方提供的<a href="https://element.eleme.io/#/zh-CN/component/upload" target="_blank" rel="noopener">api</a>用起来就有些不足。</p>
+<h4 id="开发背景"><a href="#开发背景" class="headerlink" title="开发背景"></a>开发背景</h4><p>需要把图片上传至文件系统服务器，再将返回的储存路径，通过axios请求发给后端。在以前的项目中是直接对input[type=”file”]做处理，使用的是<strong>formData</strong>作为参数传值。官方api上并没有提供非表单上传文件的方法，结合别人的思路和自己的思考，本篇文章对此做个总结。</p>
+<h4 id="参数说明"><a href="#参数说明" class="headerlink" title="参数说明"></a>参数说明</h4><ol>
+<li>action: 为必填项，如果使用axios发送请求，可以为空</li>
+<li>ref: 获取上传文件的内容，实际项目中没用到。取值: this.$refs.uploadImage.fileList，该值与函数返回的file内的值相同</li>
+<li>multiple: 同时选择多个文件</li>
+<li>list-type: 文件列表的类型(text/picture/picture-card)</li>
+<li>accept: 限制上传文件类型</li>
+<li>limit: 限制上传文件数量</li>
+<li>auto-upload: 自动上传(默认为true)，如果使用axios发送请求，设置为false</li>
+<li>file-list: 上传的文件列表</li>
+<li>on-exceed: 图片数量超出限定大小时调用</li>
+<li>on-change: 添加、上传成功或失败时调用</li>
+<li>on-remove: 移除图片时调用</li>
+</ol>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;el-upload</span><br><span class="line">    action=<span class="string">""</span></span><br><span class="line">    ref=<span class="string">"uploadImage"</span></span><br><span class="line">    multiple</span><br><span class="line">    list-type=<span class="string">"picture-card"</span></span><br><span class="line">    accept=<span class="string">".jpg,.jpeg,.png,.pdf,.JPG,.JPEG,.PDF"</span></span><br><span class="line">    :limit=<span class="string">"20"</span></span><br><span class="line">    :auto-upload=<span class="string">"false"</span></span><br><span class="line">    :file-list=<span class="string">"imagesList"</span></span><br><span class="line">    :on-exceed=<span class="string">"handleExceed"</span></span><br><span class="line">    :on-change=<span class="string">"handleChange"</span></span><br><span class="line">    :on-remove=<span class="string">"handleRemove"</span></span><br><span class="line">  &gt;</span><br><span class="line">    &lt;i slot=<span class="string">"default"</span> <span class="class"><span class="keyword">class</span></span>=<span class="string">"el-icon-plus"</span>&gt;&lt;<span class="regexp">/i&gt;</span></span><br><span class="line"><span class="regexp">    &lt;div slot="file" slot-scope="&#123;file&#125;"&gt;</span></span><br><span class="line"><span class="regexp">      &lt;img</span></span><br><span class="line"><span class="regexp">        class="el-upload-list__item-thumbnail"</span></span><br><span class="line"><span class="regexp">        :src="file.url" alt=""</span></span><br><span class="line"><span class="regexp">      &gt;</span></span><br><span class="line"><span class="regexp">      &lt;span class="el-upload-list__item-actions"&gt;</span></span><br><span class="line"><span class="regexp">        &lt;span</span></span><br><span class="line"><span class="regexp">          class="el-upload-list__item-delete"</span></span><br><span class="line"><span class="regexp">        &gt;</span></span><br><span class="line"><span class="regexp">          &lt;i class="el-icon-delete"&gt;&lt;/i</span>&gt;</span><br><span class="line">        &lt;<span class="regexp">/span&gt;</span></span><br><span class="line"><span class="regexp">      &lt;/</span>span&gt;</span><br><span class="line">    &lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">    &lt;div slot="tip" class="el-upload__tip"&gt;支持JPG/</span>JPEG/PNG/PDF格式，大小在<span class="number">10</span>MB内，最大上传数<span class="number">20</span>个&lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">  &lt;/</span>el-upload&gt;</span><br><span class="line">&lt;<span class="regexp">/template&gt;</span></span><br><span class="line"><span class="regexp">&lt;script&gt;</span></span><br><span class="line"><span class="regexp">  export default &#123;</span></span><br><span class="line"><span class="regexp">    data() &#123;</span></span><br><span class="line"><span class="regexp">      imagesList: [],</span></span><br><span class="line"><span class="regexp">      imagesSelectList: [],</span></span><br><span class="line"><span class="regexp">    &#125;,</span></span><br><span class="line"><span class="regexp">    methods: &#123;</span></span><br><span class="line"><span class="regexp">      /</span><span class="regexp">/ 上传图片超出限定值</span></span><br><span class="line"><span class="regexp">      handleExceed(file, fileList) &#123;</span></span><br><span class="line"><span class="regexp">        this.$message.warning('所选图片数量超出最大值');</span></span><br><span class="line"><span class="regexp">      &#125;,</span></span><br><span class="line"><span class="regexp">      handleChange(file, fileList) &#123;</span></span><br><span class="line"><span class="regexp">        /</span><span class="regexp">/ 文件后缀做判断</span></span><br><span class="line"><span class="regexp">        let nameArr = file.name.split('.');</span></span><br><span class="line"><span class="regexp">        let fileType = nameArr[nameArr.length - 1];</span></span><br><span class="line"><span class="regexp">        if (fileType == 'pdf') &#123;</span></span><br><span class="line"><span class="regexp">          fileType = 'text';</span></span><br><span class="line"><span class="regexp">        &#125;else &#123;</span></span><br><span class="line"><span class="regexp">          fileType = 'img';</span></span><br><span class="line"><span class="regexp">        &#125;</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">        /</span><span class="regexp">/ 上传图片至文件服务器，再获取返回的储存路径</span></span><br><span class="line"><span class="regexp">        let formData = new FormData();</span></span><br><span class="line"><span class="regexp">        formData.append('type', fileType);</span></span><br><span class="line"><span class="regexp">        formData.append('file', file.raw)</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">        this.$axios.post(</span></span><br><span class="line"><span class="regexp">          '/</span>fileUpload<span class="string">',</span></span><br><span class="line"><span class="string">          formData,</span></span><br><span class="line"><span class="string">          res =&gt; &#123;</span></span><br><span class="line"><span class="string">            if (res.code == 0) &#123;</span></span><br><span class="line"><span class="string">              this.imagesSelectList.push(&#123;</span></span><br><span class="line"><span class="string">                name: file.name,</span></span><br><span class="line"><span class="string">                url: res.data.file_url</span></span><br><span class="line"><span class="string">              &#125;);</span></span><br><span class="line"><span class="string">            &#125;else &#123;</span></span><br><span class="line"><span class="string">              this.$message.warning(res.message);</span></span><br><span class="line"><span class="string">            &#125;</span></span><br><span class="line"><span class="string">          &#125;</span></span><br><span class="line"><span class="string">        )</span></span><br><span class="line"><span class="string">      &#125;,</span></span><br><span class="line"><span class="string">      // 移除文件</span></span><br><span class="line"><span class="string">      handleRemove(file, fileList) &#123;</span></span><br><span class="line"><span class="string">        let index = this.imagesSelectList.findIndex((item) =&gt; &#123;</span></span><br><span class="line"><span class="string">          return item.name == file.name;</span></span><br><span class="line"><span class="string">        &#125;)</span></span><br><span class="line"><span class="string">        if (index !== -1) &#123;</span></span><br><span class="line"><span class="string">          this.imagesSelectList.splice(index, 1);</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">      &#125;,</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&lt;/script&gt;</span></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>methods</category>
+      </categories>
+      <tags>
+        <tag>vue</tag>
+        <tag>ElementUI</tag>
+        <tag>el-upload</tag>
+        <tag>upload</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>input限制输入字符的方法</title>
+    <url>/2019/07/30/2019-08-v-model%E9%99%90%E5%88%B6%E8%BE%93%E5%85%A5%E6%AD%A3%E6%95%B4%E6%95%B0/</url>
+    <content><![CDATA[<h2 id="限制只能输入数字"><a href="#限制只能输入数字" class="headerlink" title="限制只能输入数字"></a>限制只能输入数字</h2><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">onkeyup</span>=<span class="string">'this.value=this.value.replace(/\D/gi,"")'</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>&nbsp;</p>
+<h2 id="input限制保留两位小数，且只能输入数字及一个小数点符号"><a href="#input限制保留两位小数，且只能输入数字及一个小数点符号" class="headerlink" title="input限制保留两位小数，且只能输入数字及一个小数点符号"></a>input限制保留两位小数，且只能输入数字及一个小数点符号</h2><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">clearNoNum</span>(<span class="params">obj</span>)</span>&#123;</span><br><span class="line">  <span class="keyword">let</span> obj = e.target;</span><br><span class="line">  obj.value = obj.value.replace(<span class="regexp">/[^\d.]/g</span>,<span class="string">""</span>); <span class="comment">//清除"数字"和"."以外的字符</span></span><br><span class="line">  obj.value = obj.value.replace(<span class="regexp">/^\./g</span>,<span class="string">""</span>); <span class="comment">//验证第一个字符是数字</span></span><br><span class="line">  obj.value = obj.value.replace(<span class="regexp">/\.&#123;2,&#125;/g</span>,<span class="string">"."</span>); <span class="comment">//只保留第一个, 清除多余的</span></span><br><span class="line">  obj.value = obj.value.replace(<span class="string">"."</span>,<span class="string">"$#$"</span>).replace(<span class="regexp">/\./g</span>,<span class="string">""</span>).replace(<span class="string">"$#$"</span>,<span class="string">"."</span>);</span><br><span class="line">  obj.value = obj.value.replace(<span class="regexp">/^(\-)*(\d+)\.(\d\d).*$/</span>,<span class="string">'$1$2.$3'</span>); <span class="comment">//只能输入两个小数</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">//以上已经过滤，此处控制的是如果没有小数点，首位不能为类似于 01、02的金额</span></span><br><span class="line">  <span class="keyword">if</span>(obj.value.indexOf(<span class="string">"."</span>) &lt; <span class="number">0</span> &amp;&amp; obj.value !=<span class="string">""</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span>(obj.value.substr(<span class="number">0</span>,<span class="number">1</span>) == <span class="string">'0'</span> &amp;&amp; obj.value.length == <span class="number">2</span>)&#123;</span><br><span class="line">        obj.value= <span class="built_in">parseFloat</span>(obj.value);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在Input中调用：</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">name</span>=<span class="string">"je"</span> <span class="attr">onkeyup</span>=<span class="string">"clearNoNum(this)"</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>&nbsp;</p>
+<h2 id="input限制输入正整数"><a href="#input限制输入正整数" class="headerlink" title="input限制输入正整数"></a>input限制输入正整数</h2><p>原型需求：项目中的Input要求只能输入正整数</p>
+<h4 id="给input绑定keyup事件"><a href="#给input绑定keyup事件" class="headerlink" title="给input绑定keyup事件"></a>给input绑定keyup事件</h4><p>该方式直接在标签内绑定事件，仅适用于input数量较少时使用。</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">v-model</span>=<span class="string">"value"</span> @<span class="attr">keyup</span>=<span class="string">"value = value.length === 1 ? value.replace(/[^1-9]/g, '') : value.replace(/\D/g, '')"</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="使用vue自定义指令"><a href="#使用vue自定义指令" class="headerlink" title="使用vue自定义指令"></a>使用vue自定义指令</h4><ol>
+<li>新建js文件 parseInt.js<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> Vue <span class="keyword">from</span> <span class="string">'vue'</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> () =&gt; &#123;</span><br><span class="line">  <span class="comment">// 针对 el-input做的限制，只能输入正整数</span></span><br><span class="line">  Vue.directive(<span class="string">'Int'</span>, &#123;</span><br><span class="line">    bind: <span class="function"><span class="keyword">function</span> (<span class="params">el</span>) </span>&#123;</span><br><span class="line">      <span class="keyword">const</span> input = el</span><br><span class="line">      input.onkeyup = <span class="function"><span class="keyword">function</span> (<span class="params">e</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (input.value.length === <span class="number">1</span>) &#123;</span><br><span class="line">          input.value = input.value.replace(<span class="regexp">/[^1-9]/g</span>, <span class="string">''</span>)</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">          input.value = input.value.replace(<span class="regexp">/[^\d]/g</span>, <span class="string">''</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        trigger(input, <span class="string">'input'</span>)</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      input.onblur = <span class="function"><span class="keyword">function</span> (<span class="params">e</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (input.value.length === <span class="number">1</span>) &#123;</span><br><span class="line">          input.value = input.value.replace(<span class="regexp">/[^1-9]/g</span>, <span class="string">''</span>)</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">          input.value = input.value.replace(<span class="regexp">/[^\d]/g</span>, <span class="string">''</span>)</span><br><span class="line"></span><br><span class="line">          <span class="comment">// 去掉所有从第一位开始的数字0</span></span><br><span class="line">          input.value = input.value.replace(<span class="regexp">/\b(0+)/gi</span>, <span class="string">''</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        trigger(input, <span class="string">'input'</span>)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*********************************</span></span><br><span class="line"><span class="comment">  ** Fn: trigger</span></span><br><span class="line"><span class="comment">  ** Intro: 参考 https://github.com/vuejs/Discussion/issues/157#issuecomment-273301588</span></span><br><span class="line"><span class="comment">  ** Author: zyx</span></span><br><span class="line"><span class="comment">*********************************/</span></span><br><span class="line"><span class="keyword">const</span> trigger = <span class="function">(<span class="params">el, type</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> e = <span class="built_in">document</span>.createEvent(<span class="string">'HTMLEvents'</span>)</span><br><span class="line">  e.initEvent(type, <span class="literal">true</span>, <span class="literal">true</span>)</span><br><span class="line">  el.dispatchEvent(e)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>在main.js中注册自定义指令<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> Directives <span class="keyword">from</span> <span class="string">'./assets/js/parseInt.js'</span></span><br><span class="line">Vue.use(Directives)</span><br><span class="line"><span class="string">``</span><span class="string">` </span></span><br><span class="line"><span class="string">3. 在vue文件内应用</span></span><br><span class="line"><span class="string">`</span><span class="string">``</span>html</span><br><span class="line">&lt;input v-<span class="keyword">else</span> v-model.trim=<span class="string">"item.num"</span> type=<span class="string">"number"</span> max=<span class="string">"40"</span> v-Int/&gt;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<p>该问题解决方案参考<a href="https://juejin.im/post/5bc5c48f6fb9a05d09658093" target="_blank" rel="noopener">该文章</a>，并在作者的方法上做了相应需求的修改。</p>
+<p>原方法判断只有一位数字时会限制输入数字0，但是无法限制长按0键时的一串数字(该Bug来源于我们公司优秀的测试)。</p>
+]]></content>
+      <categories>
+        <category>debug</category>
+      </categories>
+      <tags>
+        <tag>vue</tag>
+        <tag>input</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>浏览器本地储存方法</title>
+    <url>/2019/07/30/2019-08-%E6%B5%8F%E8%A7%88%E5%99%A8%E6%9C%AC%E5%9C%B0%E5%82%A8%E5%AD%98%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<h2 id="cookie"><a href="#cookie" class="headerlink" title="cookie"></a>cookie</h2><p>在vue中获取本地cookie值的封装方法：</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 获取指定名称(name)的cookie值</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getCookie</span>(<span class="params">name</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> arr = <span class="built_in">document</span>.cookie.match(<span class="keyword">new</span> <span class="built_in">RegExp</span>(<span class="string">"(^| )"</span>+name+<span class="string">"=([^;]*)(;|$)"</span>));</span><br><span class="line">  <span class="keyword">if</span>(arr != <span class="literal">null</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">unescape</span>(arr[<span class="number">2</span>]);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>说明：(^| )name=([^;]*)(;|$),match[0]为与整个正则表达式匹配的字符串，match[i]为正则表达式捕获数组相匹配的数组</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> cookieData = getCookie(<span class="string">'token'</span>);</span><br></pre></td></tr></table></figure>
+<p>cookieData为获取名为’token’的cookie值</p>
+]]></content>
+      <categories>
+        <category>debug</category>
+      </categories>
+      <tags>
+        <tag>vue</tag>
+        <tag>js</tag>
+        <tag>cookie</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>表单校验正则的方法</title>
+    <url>/2019/08/07/2019-08-%E8%A1%A8%E5%8D%95%E6%A0%A1%E9%AA%8C%E6%AD%A3%E5%88%99%E7%9A%84%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>做项目时，肯定会有表单验证这样的需求，但是每次多少都不太一样，本篇文章用于记录开发中我所用过的且可用的验证方法。本项目中使用ElementUI框架，ElementUI是基于Vue.js开发的UI框架，有封装好的各种组件可直接使用，并且可以自己配置主题颜色，适用于需要高效快捷完成开发工作的同学。</p>
+<h2 id="校验规则"><a href="#校验规则" class="headerlink" title="校验规则"></a>校验规则</h2><ol>
+<li><p>用户名/姓名<br>不限制输入字符，长度为10位<br>可使用input的属性：maxlength</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">el-input</span></span></span><br><span class="line"><span class="tag">  <span class="attr">placeholder</span>=<span class="string">"1-10个字符，允许中英文、数字或符号"</span></span></span><br><span class="line"><span class="tag">  <span class="attr">maxlength</span>=<span class="string">"10"</span></span></span><br><span class="line"><span class="tag">  <span class="attr">clearable</span></span></span><br><span class="line"><span class="tag">  <span class="attr">v-model</span>=<span class="string">"params.name"</span></span></span><br><span class="line"><span class="tag">  @<span class="attr">blur</span>=<span class="string">"validateForm('name')"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">el-input</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"error"</span>&gt;</span>&#123;&#123; nameError &#125;&#125;<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>手机号<br>限制输入字符仅为数字且长度为11位<br>绑定input事件，最好使用oninput，@input方法不生效。在输入时判断当前输入字符是否为数字，除数字外的字符都被替换为空，并且对超出长度的字符截取。</p>
+</li>
+</ol>
+<p><strong>注：绑定事件后，maxlength不生效。</strong></p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">el-input</span></span></span><br><span class="line"><span class="tag">  <span class="attr">type</span>=<span class="string">"number"</span></span></span><br><span class="line"><span class="tag">  <span class="attr">oninput</span>=<span class="string">"value=value.replace(/[^\d]/g,'').slice(0,11)"</span></span></span><br><span class="line"><span class="tag">  <span class="attr">placeholder</span>=<span class="string">"请输入手机号"</span></span></span><br><span class="line"><span class="tag">  <span class="attr">v-model</span>=<span class="string">"params.phone"</span></span></span><br><span class="line"><span class="tag">  <span class="attr">clearable</span></span></span><br><span class="line"><span class="tag">  @<span class="attr">blur</span>=<span class="string">"validateForm('phone')"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">el-input</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"error"</span>&gt;</span>&#123;&#123; phoneError &#125;&#125;<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="逻辑代码"><a href="#逻辑代码" class="headerlink" title="逻辑代码"></a>逻辑代码</h2><p><strong>validateForm</strong>方法在input失去焦点时调用，即可进行数值的校验。为防止失焦校验不准确，在最后提交时，再校验一遍，也可以校验其他不需要失焦校验的情况。</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">&lt;script&gt;</span><br><span class="line">  <span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">    data() &#123;</span><br><span class="line">      params: &#123;</span><br><span class="line">        name: <span class="string">''</span>,</span><br><span class="line">        phone: <span class="string">''</span></span><br><span class="line">      &#125;,</span><br><span class="line">      verified: <span class="literal">true</span>,</span><br><span class="line">      nameError: <span class="string">''</span>,</span><br><span class="line">      phoneError: <span class="string">''</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">    methods: &#123;</span><br><span class="line">      <span class="comment">// 表单校验</span></span><br><span class="line">      validateForm(field) &#123;</span><br><span class="line">        <span class="comment">// 校验规则</span></span><br><span class="line">        <span class="keyword">let</span> reg = &#123;</span><br><span class="line">          phoneReg: <span class="regexp">/^([1][3-9]&#123;1&#125;)\d&#123;9&#125;$/</span>,</span><br><span class="line">          idNumberReg: <span class="regexp">/^\d&#123;18&#125;|\d&#123;17&#125;[X]$/g</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 非空字段，用于显示提示语</span></span><br><span class="line">        <span class="keyword">let</span> msgList = [</span><br><span class="line">          &#123;</span><br><span class="line">            prop: <span class="string">'name'</span>,</span><br><span class="line">            label:<span class="string">'姓名'</span></span><br><span class="line">          &#125;,&#123;</span><br><span class="line">            prop: <span class="string">'phone'</span>,</span><br><span class="line">            label:<span class="string">'手机号'</span></span><br><span class="line">          &#125;</span><br><span class="line">        ]</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (field !== <span class="literal">undefined</span>) &#123;</span><br><span class="line">          <span class="comment">// field不为undefined时，当前为失焦判断</span></span><br><span class="line">          <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; msgList.length; i++) &#123;</span><br><span class="line">            <span class="keyword">let</span> item = msgList[i];</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 循环匹配与当前field相等的字段</span></span><br><span class="line">            <span class="keyword">if</span> (item.prop == field) &#123;</span><br><span class="line">              <span class="keyword">if</span>(<span class="keyword">this</span>.params[field] == <span class="string">''</span>) &#123;</span><br><span class="line">                <span class="comment">// 校验不能为空，并提示</span></span><br><span class="line">                <span class="keyword">this</span>[field + <span class="string">'Error'</span>] = item.label + <span class="string">'不能为空'</span>;</span><br><span class="line">                <span class="keyword">this</span>.verified = <span class="literal">false</span>;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">              &#125;<span class="keyword">else</span> <span class="keyword">if</span> (field !== <span class="string">'name'</span> &amp;&amp; <span class="keyword">this</span>.params[field].match(reg[field+<span class="string">'Reg'</span>]) == <span class="literal">null</span>) &#123;</span><br><span class="line">                <span class="comment">// 输入字符后进行校验，并提示</span></span><br><span class="line">                <span class="keyword">this</span>[field + <span class="string">'Error'</span>] = item.label + <span class="string">'格式错误'</span>;</span><br><span class="line">                <span class="keyword">this</span>.verified = <span class="literal">false</span>;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">              &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">// 不为空且校验正确，清空提示语</span></span><br><span class="line">                <span class="keyword">this</span>[field + <span class="string">'Error'</span>] = <span class="string">''</span>;</span><br><span class="line">                <span class="keyword">this</span>.verified = <span class="literal">true</span>;</span><br><span class="line">              &#125;</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">          <span class="comment">// 未传参field时，为最后提交时的校验</span></span><br><span class="line">          <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; msgList.length; i++) &#123;</span><br><span class="line">            <span class="keyword">let</span> item = msgList[i];</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 循环匹配所有字段</span></span><br><span class="line">            <span class="keyword">if</span>(<span class="keyword">this</span>.params[item.prop] == <span class="string">''</span>) &#123;</span><br><span class="line">              <span class="comment">// 校验不能为空，并提示</span></span><br><span class="line">              <span class="keyword">this</span>[item.prop + <span class="string">'Error'</span>] = item.label + <span class="string">'不能为空'</span>;</span><br><span class="line">              <span class="keyword">this</span>.verified = <span class="literal">false</span>;</span><br><span class="line">              <span class="keyword">break</span>;</span><br><span class="line">            &#125;<span class="keyword">else</span> <span class="keyword">if</span> (item.prop !== <span class="string">'name'</span> &amp;&amp; <span class="keyword">this</span>.params[item.prop].match(reg[item.prop+<span class="string">'Reg'</span>]) == <span class="literal">null</span>) &#123;</span><br><span class="line">              <span class="comment">// 输入字符后进行校验，并提示</span></span><br><span class="line">              <span class="keyword">this</span>[item.prop + <span class="string">'Error'</span>] = item.label + <span class="string">'格式错误'</span>;</span><br><span class="line">              <span class="keyword">this</span>.verified = <span class="literal">false</span>;</span><br><span class="line">              <span class="keyword">break</span>;</span><br><span class="line">            &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">              <span class="keyword">this</span>[item.prop + <span class="string">'Error'</span>] = <span class="string">''</span>;</span><br><span class="line">              <span class="keyword">this</span>.verified = <span class="literal">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="comment">// 提交表单</span></span><br><span class="line">      submit() &#123;</span><br><span class="line">        <span class="comment">// 调用validateForm方法且不传参，进行校验</span></span><br><span class="line">        <span class="keyword">this</span>.validateForm();</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">this</span>.verified) &#123;</span><br><span class="line">          <span class="comment">// 表单校验正确，提交</span></span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&lt;<span class="regexp">/script&gt;</span></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>methods</category>
+      </categories>
+      <tags>
+        <tag>vue</tag>
+        <tag>ElementUI</tag>
+        <tag>input</tag>
+        <tag>el-input</tag>
+      </tags>
   </entry>
 </search>

@@ -193,115 +193,6 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/23/%E5%89%8D%E7%AB%AF%E4%B9%8B%E8%B7%AF%E7%9A%84%E5%9F%BA%E7%9F%B3-JavaScript%E4%BA%8B%E4%BB%B6/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://tvax2.sinaimg.cn/crop.0.0.960.960.180/b4866dcfly8fp6p33spu1j20qo0qomz2.jpg?Expires=1564549093&ssig=e3yJPxIPmx&KID=imgbed,tva">
-      <meta itemprop="name" content="zoe">
-      <meta itemprop="description" content="做自己喜欢的事情，为喜欢的事情而努力">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Zoe">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/12/23/%E5%89%8D%E7%AB%AF%E4%B9%8B%E8%B7%AF%E7%9A%84%E5%9F%BA%E7%9F%B3-JavaScript%E4%BA%8B%E4%BB%B6/" class="post-title-link" itemprop="url">前端之路的基石-JavaScript事件</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-12-23 15:40:23" itemprop="dateCreated datePublished" datetime="2018-12-23T15:40:23+08:00">2018-12-23</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-07-05 09:53:00" itemprop="dateModified" datetime="2020-07-05T09:53:00+08:00">2020-07-05</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="事件"><a href="#事件" class="headerlink" title="事件"></a>事件</h2><p>交互：触动页面的元素后会有相应的反馈<br>事件：实现交互核心的技术点，由两部分构成，需要绑定元素 和 触发事件时执行的函数</p>
-<h3 id="绑定事件处理函数"><a href="#绑定事件处理函数" class="headerlink" title="绑定事件处理函数"></a>绑定事件处理函数</h3><p>绑定事件的三种方法：</p>
-<ol>
-<li><p>ele.onxxx = function  (event) { }</p>
- <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 在div元素的onclick事件上，绑定一个处理函数</span></span><br><span class="line"><span class="keyword">var</span> div = <span class="built_in">document</span>.getElementsByTagName(<span class="string">'div'</span>)[<span class="number">0</span>];</span><br><span class="line">div.onclick = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="keyword">this</span>);<span class="comment">// this指向div元素</span></span><br><span class="line">    <span class="keyword">this</span>.style.backgroundColor = <span class="string">"green"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p> 优点：兼容性很好 是最早用来处理事件、绑定函数的方法，实际上就是给一个对象新增方法(或者说给对象的属性赋值) </p>
-<p> 缺点：一个元素的同一个事件上只能绑定一个 如果给一个元素绑定多个click事件，只会执行最后一个，原因是给对象的属性赋值时只能生效一次，多次赋值会覆盖之前的值</p>
-<p> 基本等同于写在HTML行间上 通过”on+类型”绑定事件的方式叫做：句柄的绑定方法（绑定到元素上执行）</p>
- <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">style</span>=<span class="string">"width: 100px;height: 100px;background-color: red;"</span></span></span><br><span class="line"><span class="tag"><span class="attr">onclick</span>=<span class="string">"console.log(this)"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
-<li><p>obj.addEventListener(type, fn, false);<br> 缺点：IE9以下不兼容 W3C标准<br> 优点：可以为一个事件绑定多个处理程序</p>
-<p> 事件实际上是有着监听属性的，一直处于等待执行的状态。执行这个事件不是JS引擎来直接执行的， 而是像 setInterval 一样被放到队列中等待执行</p>
- <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// function匿名函数是函数引用，跟写一个外部函数名是一样的</span></span><br><span class="line">div[<span class="number">1</span>].addEventListener(<span class="string">'click'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="keyword">this</span>);<span class="comment">// 指向div;</span></span><br><span class="line">&#125;, <span class="literal">false</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 绑定多个函数时，按照绑定顺序来执行</span></span><br><span class="line"><span class="comment">// 能给同一个对象的同一个事件绑定多个处理函数</span></span><br><span class="line"><span class="comment">// 虽然写成匿名函数的写法，但是和上面的事件被看做两个不同的函数</span></span><br><span class="line">div[<span class="number">1</span>].addEventListener(<span class="string">'click'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="keyword">this</span>);<span class="comment">// 指向div</span></span><br><span class="line">&#125;, <span class="literal">false</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 这种写法是默认了test函数为同一个函数，所以只会执行一次</span></span><br><span class="line"><span class="comment">// 所以，不建议重复绑定同一个函数多次</span></span><br><span class="line">div[<span class="number">2</span>].addEventListener(<span class="string">'click'</span>, test, <span class="literal">false</span>);</span><br><span class="line">div[<span class="number">2</span>].addEventListener(<span class="string">'click'</span>, test, <span class="literal">false</span>);</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">test</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="keyword">this</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li><p>obj.attachEvent(“on” + type, fn);<br> IE独有，一个事件同样可以绑定多个处理程序</p>
-<p> 与addEventListener方法基本是一致的，唯一的不同是只有两个参数。在运行上，也可以给一个元素绑定多个事件，并且同一个元素绑定同一事件的同一个函数多次也可执行多次。</p>
-<p> 第三个参数即使写了也不会报错，这是函数传参的特点，可以接受多个实参</p>
- <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">div[<span class="number">2</span>].attachEvent(<span class="string">'click'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 这里的this指向window</span></span><br><span class="line">    handle.call(div[<span class="number">2</span>]);</span><br><span class="line">&#125;);</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">handle</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 这里的this指向div[2]</span></span><br><span class="line">    <span class="keyword">this</span>.style.width = <span class="string">"200px"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p> <strong>绑定事件如果在循环内，在匿名函数内查看是否用到了循环参数 i ，如果用到了一定要注意是否形成了闭包，如果是闭包，就要用立即执行函数来处理。</strong></p>
- <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> li = <span class="built_in">document</span>.getElementsByTagName(<span class="string">'li'</span>);</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; li.length; i ++) &#123;</span><br><span class="line">    (<span class="function"><span class="keyword">function</span>(<span class="params">i</span>) </span>&#123;</span><br><span class="line">        li[i].addEventListener(<span class="string">'click'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">"我是第"</span> + (i + <span class="number">1</span>) + <span class="string">"位"</span>);</span><br><span class="line">        &#125;, <span class="literal">false</span>);</span><br><span class="line">    &#125;(i));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p> 绑定事件的机制：添加属性</p>
-<blockquote>
-<p>机制的意思是原理、本质，绑定事件的机制也就是指绑定事件实现的原理。</p>
-</blockquote>
-</li>
-</ol>
-<h3 id="事件处理程序的运行环境"><a href="#事件处理程序的运行环境" class="headerlink" title="事件处理程序的运行环境"></a>事件处理程序的运行环境</h3><p>运行环境实际上就是函数内的this指向问题。</p>
-<ol>
-<li><p>ele.onxxx = function  (event) { }<br> 程序this指向的是<strong>dom元素本身</strong></p>
-</li>
-<li><p>obj.addEventListener(type, fn, false);<br> 程序this指向的是<strong>dom元素本身</strong></p>
-</li>
-<li><p>obj.attachEvent(“on” + type, fn);<br> 程序this指向的是<strong>window</strong></p>
-<p> 改变 attachEvent 方法的 this 指向，不指向 window 而是指向操作 dom 自己</p>
- <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 指向dom自己</span></span><br><span class="line">div[<span class="number">2</span>].attachEvent(<span class="string">'click'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 这里的this指向window</span></span><br><span class="line">    handle.call(div[<span class="number">2</span>]);</span><br><span class="line">&#125;, <span class="literal">false</span>);</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">handle</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 这里的this指向div[2]</span></span><br><span class="line">    <span class="keyword">this</span>.style.width = <span class="string">"200px"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-</li>
-</ol>
-<h3 id="封装兼容函数-重点"><a href="#封装兼容函数-重点" class="headerlink" title="封装兼容函数(重点)"></a>封装兼容函数(重点)</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 兼容 绑定事件</span></span><br><span class="line"><span class="comment">// 给一个dom对象添加该事件类型的处理函数</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">addEvent</span>(<span class="params">elem, type, handle</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(elem.addEventListener) &#123;</span><br><span class="line">        elem.addEventListener(type, handle, <span class="literal">false</span>);</span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>(elem.attachEvent) &#123;</span><br><span class="line">        elem.attachEvent(<span class="string">'on'</span> + type, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">            handle.call(elem);</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">        elem[<span class="string">'on'</span> + type] = handle;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2018/12/23/%E5%89%8D%E7%AB%AF%E4%B9%8B%E8%B7%AF%E7%9A%84%E5%9F%BA%E7%9F%B3-JavaScript%E4%BA%8B%E4%BB%B6/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/23/%E5%89%8D%E7%AB%AF%E4%B9%8B%E8%B7%AF%E7%9A%84%E5%9F%BA%E7%9F%B3-JavaScript%E2%91%A9/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -438,7 +329,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-07-04 19:54:11" itemprop="dateModified" datetime="2020-07-04T19:54:11+08:00">2020-07-04</time>
+                <time title="修改时间：2020-07-29 11:47:48" itemprop="dateModified" datetime="2020-07-29T11:47:48+08:00">2020-07-29</time>
               </span>
 
           
@@ -1177,6 +1068,102 @@ b虽然是函数，但是是用变量来接收的，所以也算在内。</code>
   
   
 
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/23/%E5%89%8D%E7%AB%AF%E4%B9%8B%E8%B7%AF%E7%9A%84%E5%9F%BA%E7%9F%B3-JavaScript%E2%91%A0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://tvax2.sinaimg.cn/crop.0.0.960.960.180/b4866dcfly8fp6p33spu1j20qo0qomz2.jpg?Expires=1564549093&ssig=e3yJPxIPmx&KID=imgbed,tva">
+      <meta itemprop="name" content="zoe">
+      <meta itemprop="description" content="做自己喜欢的事情，为喜欢的事情而努力">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zoe">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/12/23/%E5%89%8D%E7%AB%AF%E4%B9%8B%E8%B7%AF%E7%9A%84%E5%9F%BA%E7%9F%B3-JavaScript%E2%91%A0/" class="post-title-link" itemprop="url">前端之路的基石-JavaScript①</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-12-23 10:30:14" itemprop="dateCreated datePublished" datetime="2018-12-23T10:30:14+08:00">2018-12-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-06-27 13:24:23" itemprop="dateModified" datetime="2020-06-27T13:24:23+08:00">2020-06-27</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="浏览器发展史"><a href="#浏览器发展史" class="headerlink" title="浏览器发展史"></a>浏览器发展史</h2><ol>
+<li>web发展史</li>
+</ol>
+<ul>
+<li>www浏览器：最早发源的浏览器，但是刚出现就消失了</li>
+<li>Mosaic(马赛克)是互联网上第一个投入生产并且获得普遍使用的显示图片的浏览器，1993年问世。</li>
+</ul>
+<blockquote>
+<p>&emsp;&emsp;马克·安德森和伊利诺伊大学共同研发了Mosaic浏览器，又来由于版权在伊利诺伊大学手里，不能再被使用，后来又重新组建团队做了一个一模一样的浏览器，名为”Netscape<br>Navigator”轰动一时。这个公司就是”网景”公司。后来，03年的时候改名为Mozilla<br>Firefox。<br>&emsp;&emsp;伊利诺伊大学将浏览器转让给Spy Glass公司，后来微软(比尔盖茨)买下了Spy Glass公司的技术后，开发出了Interner Explorer浏览器(IE1.0，互联网探索者)，在1996年推出。<br>&emsp;&emsp;网景公司开放了浏览器的源码，后来才有了Mozilla Firefox(Mosaic<br>killler)</p>
+</blockquote>
+<ol start="2">
+<li>js发展史</li>
+</ol>
+<ul>
+<li>作者：Brendan Eich</li>
+<li>该作者用了23天左右的时间设计了一门语言叫做JavaScript，1996年诞生。C语言</li>
+<li>最初是用来改善网页的用户体验，以前的网页都是静态的，发明JavaScript后就可以动态的改变页面的逻辑。</li>
+<li>java和JavaScript在技术上没有关系，JavaScript最早叫做”LiveScript”，网景公司最开始和Sun公司进行合作，因为Sun公司发明了”Java”，后来改名为”JavaScript”。后来Sun公司被Oracle公司收购后，JavaScript版权就归Oracle所有。</li>
+</ul>
+<h2 id="浏览器组成"><a href="#浏览器组成" class="headerlink" title="浏览器组成"></a>浏览器组成</h2><ol>
+<li>shell部分：用户可以看得到的浏览器的部分，例如界面、菜单、设置等</li>
+<li>内核部分：用于处理代码并且将代码展示出来的看不到的部分<br>&emsp;大致分为两大部分：<br>&emsp;&emsp;- 渲染引擎(语法规则和渲染)：html、css基础语法的识别，使浏览器怎么绘制页面更高效<br>&emsp;&emsp;- js引擎：js<br>&emsp;&emsp;- 其他模块：异步</li>
+</ol>
+<p>&emsp;js引擎的历史：<br>&emsp;&emsp;2001，发布了IE6和window xp，实现对js引擎的优化和分离。<br>&emsp;&emsp;2008，Google联合Apple公司联合发开并发布Chrome，当时是webkit内核，引擎代号V8(来源于非常大的火箭的引擎，用C++所写)。以前的引擎是将js代码翻译成C再翻译成机器码，然后机器才能运行。Chrome对js引擎做了优化， 可以直接将JavaScript代码直接转为机器码(0、1)，所以理论上Chrome渲染页面是最快的。<br>&emsp;&emsp;后来，Firefox也推出了功能强大的js引擎，3.5版本 对频繁执行的代码做了路径优化</p>
+<h2 id="js的特点"><a href="#js的特点" class="headerlink" title="js的特点"></a>js的特点</h2>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2018/12/23/%E5%89%8D%E7%AB%AF%E4%B9%8B%E8%B7%AF%E7%9A%84%E5%9F%BA%E7%9F%B3-JavaScript%E2%91%A0/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
 
   
   <nav class="pagination">
@@ -1248,7 +1235,7 @@ b虽然是函数，但是是用变量来接收的，所以也算在内。</code>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-count">24</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1257,7 +1244,7 @@ b虽然是函数，但是是用变量来接收的，所以也算在内。</code>
         <span class="site-state-item-name">分类</span>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-count">9</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
